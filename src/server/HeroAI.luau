@@ -176,6 +176,27 @@ function HeroAI.SpawnHero(spawnPosition)
     
     table.insert(ActiveHeroes, heroData)
     
+    -- Listen for death to clean up
+    local humanoid = hero:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.Died:Connect(function()
+            print("💀 Hero died! Cleaning up...")
+            -- Remove from active heroes
+            for i, data in ipairs(ActiveHeroes) do
+                if data == heroData then
+                    table.remove(ActiveHeroes, i)
+                    break
+                end
+            end
+            -- Destroy after delay
+            task.delay(2, function()
+                if hero and hero.Parent then
+                    hero:Destroy()
+                end
+            end)
+        end)
+    end
+    
     -- Start AI loop
     task.spawn(function()
         HeroAI.RunAI(heroData)
