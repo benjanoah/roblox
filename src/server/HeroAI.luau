@@ -181,18 +181,37 @@ function HeroAI.SpawnHero(spawnPosition)
     if humanoid then
         humanoid.Died:Connect(function()
             print("💀 Hero died! Cleaning up...")
-            -- Remove from active heroes
+            -- Remove from active heroes IMMEDIATELY
             for i, data in ipairs(ActiveHeroes) do
                 if data == heroData then
                     table.remove(ActiveHeroes, i)
+                    print("✅ Removed from ActiveHeroes list. Total: " .. #ActiveHeroes)
                     break
                 end
             end
-            -- Destroy after delay
-            task.delay(2, function()
-                if hero and hero.Parent then
-                    hero:Destroy()
+            
+            -- Fade out and destroy
+            local hrp = hero:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.Anchored = true -- Prevent physics glitches
+            end
+            
+            -- Make transparent
+            for _, part in ipairs(hero:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    task.spawn(function()
+                        for i = 0, 1, 0.1 do
+                            part.Transparency = i
+                            task.wait(0.05)
+                        end
+                    end)
                 end
+            end
+            
+            -- Force destroy after 1 second
+            task.delay(1, function()
+                hero:Destroy()
+                print("🗑️ Hero destroyed!")
             end)
         end)
     end
