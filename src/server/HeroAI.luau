@@ -8,49 +8,163 @@ local HeroAI = {}
 
 local PathfindingService = game:GetService("PathfindingService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
 local GameConfig = require(ReplicatedStorage.Shared.GameConfig)
 
 local ActiveHeroes = {}
 
 --[[
-    Spawn a hero NPC
+    Create a basic R6-style humanoid character
 ]]
-function HeroAI.SpawnHero(spawnPosition)
-    -- Create basic R15 NPC
+local function CreateHeroBody(position)
     local hero = Instance.new("Model")
     hero.Name = "Hero"
     
-    -- Create humanoid
-    local humanoid = Instance.new("Humanoid")
-    humanoid.Parent = hero
-    humanoid.WalkSpeed = GameConfig.Hero.WalkSpeed
-    
-    -- Create HumanoidRootPart
+    -- HumanoidRootPart (center of character)
     local hrp = Instance.new("Part")
     hrp.Name = "HumanoidRootPart"
     hrp.Size = Vector3.new(2, 2, 1)
-    hrp.Position = spawnPosition
-    hrp.Anchored = false
-    hrp.CanCollide = true
+    hrp.Position = position
+    hrp.BrickColor = BrickColor.new("Bright blue")
+    hrp.TopSurface = Enum.SurfaceType.Smooth
+    hrp.BottomSurface = Enum.SurfaceType.Smooth
     hrp.Parent = hero
     
-    -- Create visible body (simple block for now)
+    -- Head
+    local head = Instance.new("Part")
+    head.Name = "Head"
+    head.Size = Vector3.new(2, 1, 1)
+    head.Position = position + Vector3.new(0, 1.5, 0)
+    head.BrickColor = BrickColor.new("Light orange")
+    head.TopSurface = Enum.SurfaceType.Smooth
+    head.BottomSurface = Enum.SurfaceType.Smooth
+    head.Parent = hero
+    
+    local headWeld = Instance.new("Weld")
+    headWeld.Part0 = hrp
+    headWeld.Part1 = head
+    headWeld.C0 = CFrame.new(0, 1.5, 0)
+    headWeld.Parent = head
+    
+    -- Torso
     local torso = Instance.new("Part")
     torso.Name = "Torso"
     torso.Size = Vector3.new(2, 2, 1)
+    torso.Position = position
     torso.BrickColor = BrickColor.new("Bright blue")
     torso.TopSurface = Enum.SurfaceType.Smooth
     torso.BottomSurface = Enum.SurfaceType.Smooth
     torso.Parent = hero
     
-    -- Weld torso to HRP
-    local weld = Instance.new("WeldConstraint")
-    weld.Part0 = hrp
-    weld.Part1 = torso
-    weld.Parent = hrp
+    local torsoWeld = Instance.new("Weld")
+    torsoWeld.Part0 = hrp
+    torsoWeld.Part1 = torso
+    torsoWeld.C0 = CFrame.new(0, 0, 0)
+    torsoWeld.Parent = torso
     
-    -- Add to workspace
+    -- Left Leg
+    local leftLeg = Instance.new("Part")
+    leftLeg.Name = "Left Leg"
+    leftLeg.Size = Vector3.new(1, 2, 1)
+    leftLeg.Position = position + Vector3.new(-0.5, -2, 0)
+    leftLeg.BrickColor = BrickColor.new("Bright green")
+    leftLeg.TopSurface = Enum.SurfaceType.Smooth
+    leftLeg.BottomSurface = Enum.SurfaceType.Smooth
+    leftLeg.Parent = hero
+    
+    local leftLegWeld = Instance.new("Motor6D")
+    leftLegWeld.Name = "Left Hip"
+    leftLegWeld.Part0 = hrp
+    leftLegWeld.Part1 = leftLeg
+    leftLegWeld.C0 = CFrame.new(-0.5, -1, 0)
+    leftLegWeld.C1 = CFrame.new(0, 1, 0)
+    leftLegWeld.Parent = hrp
+    
+    -- Right Leg
+    local rightLeg = Instance.new("Part")
+    rightLeg.Name = "Right Leg"
+    rightLeg.Size = Vector3.new(1, 2, 1)
+    rightLeg.Position = position + Vector3.new(0.5, -2, 0)
+    rightLeg.BrickColor = BrickColor.new("Bright green")
+    rightLeg.TopSurface = Enum.SurfaceType.Smooth
+    rightLeg.BottomSurface = Enum.SurfaceType.Smooth
+    rightLeg.Parent = hero
+    
+    local rightLegWeld = Instance.new("Motor6D")
+    rightLegWeld.Name = "Right Hip"
+    rightLegWeld.Part0 = hrp
+    rightLegWeld.Part1 = rightLeg
+    rightLegWeld.C0 = CFrame.new(0.5, -1, 0)
+    rightLegWeld.C1 = CFrame.new(0, 1, 0)
+    rightLegWeld.Parent = hrp
+    
+    -- Left Arm
+    local leftArm = Instance.new("Part")
+    leftArm.Name = "Left Arm"
+    leftArm.Size = Vector3.new(1, 2, 1)
+    leftArm.Position = position + Vector3.new(-1.5, 0, 0)
+    leftArm.BrickColor = BrickColor.new("Light orange")
+    leftArm.TopSurface = Enum.SurfaceType.Smooth
+    leftArm.BottomSurface = Enum.SurfaceType.Smooth
+    leftArm.Parent = hero
+    
+    local leftArmWeld = Instance.new("Weld")
+    leftArmWeld.Part0 = hrp
+    leftArmWeld.Part1 = leftArm
+    leftArmWeld.C0 = CFrame.new(-1.5, 0, 0)
+    leftArmWeld.Parent = leftArm
+    
+    -- Right Arm
+    local rightArm = Instance.new("Part")
+    rightArm.Name = "Right Arm"
+    rightArm.Size = Vector3.new(1, 2, 1)
+    rightArm.Position = position + Vector3.new(1.5, 0, 0)
+    rightArm.BrickColor = BrickColor.new("Light orange")
+    rightArm.TopSurface = Enum.SurfaceType.Smooth
+    rightArm.BottomSurface = Enum.SurfaceType.Smooth
+    rightArm.Parent = hero
+    
+    local rightArmWeld = Instance.new("Weld")
+    rightArmWeld.Part0 = hrp
+    rightArmWeld.Part1 = rightArm
+    rightArmWeld.C0 = CFrame.new(1.5, 0, 0)
+    rightArmWeld.Parent = rightArm
+    
+    -- Humanoid
+    local humanoid = Instance.new("Humanoid")
+    humanoid.MaxHealth = GameConfig.Hero.Health
+    humanoid.Health = GameConfig.Hero.Health
+    humanoid.WalkSpeed = GameConfig.Hero.WalkSpeed
+    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+    humanoid.Parent = hero
+    
+    -- Body Colors (optional, makes it look nicer)
+    local bodyColors = Instance.new("BodyColors")
+    bodyColors.HeadColor = BrickColor.new("Light orange")
+    bodyColors.TorsoColor = BrickColor.new("Bright blue")
+    bodyColors.LeftArmColor = BrickColor.new("Light orange")
+    bodyColors.RightArmColor = BrickColor.new("Light orange")
+    bodyColors.LeftLegColor = BrickColor.new("Bright green")
+    bodyColors.RightLegColor = BrickColor.new("Bright green")
+    bodyColors.Parent = hero
+    
+    return hero
+end
+
+--[[
+    Spawn a hero NPC
+]]
+function HeroAI.SpawnHero(spawnPosition)
+    local hero = CreateHeroBody(spawnPosition + Vector3.new(
+        math.random(-5, 5),
+        3, -- Spawn slightly above ground
+        math.random(-5, 5)
+    ))
+    
     hero.Parent = workspace
+    
+    -- Wait for character to fully load
+    task.wait(0.1)
     
     -- Initialize state
     local heroData = {
@@ -75,7 +189,12 @@ end
 ]]
 function HeroAI.RunAI(heroData)
     local hero = heroData.Model
-    local humanoid = hero:FindFirstChildOfClass("Humanoid")
+    local humanoid = hero:WaitForChild("Humanoid", 5)
+    
+    if not humanoid then
+        warn("Hero spawned without Humanoid!")
+        return
+    end
     
     while hero.Parent and humanoid.Health > 0 do
         -- State machine
@@ -139,6 +258,7 @@ function HeroAI.MoveToTarget(hero, targetPosition)
         AgentRadius = 2,
         AgentHeight = 5,
         AgentCanJump = true,
+        AgentCanClimb = false,
     })
     
     local success, errorMessage = pcall(function()
@@ -148,8 +268,8 @@ function HeroAI.MoveToTarget(hero, targetPosition)
     if success and path.Status == Enum.PathStatus.Success then
         local waypoints = path:GetWaypoints()
         
-        for _, waypoint in ipairs(waypoints) do
-            if humanoid.Health <= 0 then break end
+        for i, waypoint in ipairs(waypoints) do
+            if humanoid.Health <= 0 or not hero.Parent then break end
             
             humanoid:MoveTo(waypoint.Position)
             
@@ -158,7 +278,12 @@ function HeroAI.MoveToTarget(hero, targetPosition)
             end
             
             -- Wait for hero to reach waypoint or timeout
-            local timeout = humanoid.MoveToFinished:Wait(2)
+            local reached = humanoid.MoveToFinished:Wait(3)
+            
+            -- If stuck, try next waypoint
+            if not reached then
+                print("Hero stuck, skipping to next waypoint")
+            end
         end
     else
         -- Fallback: move directly
