@@ -263,11 +263,11 @@ local function CreateHeroBody(position)
     sword.BottomSurface = Enum.SurfaceType.Smooth
     sword.Parent = hero
     
-    -- Weld sword to hand, pointing forward (90 degree rotation)
+    -- Weld sword to hand, pointing forward with handle at hand
     local swordWeld = Instance.new("Weld")
     swordWeld.Part0 = rightArm
     swordWeld.Part1 = sword
-    swordWeld.C0 = CFrame.new(0, -1, 1.5) * CFrame.Angles(math.rad(90), 0, 0) -- Rotate 90° forward
+    swordWeld.C0 = CFrame.new(0, -1, 1.5) * CFrame.Angles(math.rad(-90), 0, 0) -- Rotate -90° so handle is at hand
     swordWeld.Parent = sword
     
     -- Sword handle (brown, at top of blade where hand grips)
