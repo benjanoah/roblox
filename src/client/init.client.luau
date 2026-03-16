@@ -36,33 +36,43 @@ local function MeleeAttack()
     local attackRange = 8
     local attackDamage = 25
     
+    -- Find the CLOSEST hero within range (not just the first one!)
+    local closestHero = nil
+    local closestDistance = attackRange
+    
     for _, obj in ipairs(workspace:GetChildren()) do
         if obj.Name == "Hero" and obj:FindFirstChild("HumanoidRootPart") then
             local heroHRP = obj.HumanoidRootPart
             local distance = (humanoidRootPart.Position - heroHRP.Position).Magnitude
             
-            if distance <= attackRange then
-                -- Deal damage (via server in real game, but for now client-side)
-                local heroHumanoid = obj:FindFirstChildOfClass("Humanoid")
-                if heroHumanoid then
-                    heroHumanoid:TakeDamage(attackDamage)
-                    print("💥 Hit " .. obj.Name .. " for " .. attackDamage .. " damage!")
-                    
-                    -- Visual feedback
-                    local hitEffect = Instance.new("Part")
-                    hitEffect.Shape = Enum.PartType.Ball
-                    hitEffect.Size = Vector3.new(2, 2, 2)
-                    hitEffect.Position = heroHRP.Position
-                    hitEffect.BrickColor = BrickColor.new("Bright red")
-                    hitEffect.Material = Enum.Material.Neon
-                    hitEffect.Anchored = true
-                    hitEffect.CanCollide = false
-                    hitEffect.Parent = workspace
-                    
-                    game:GetService("Debris"):AddItem(hitEffect, 0.3)
-                end
+            if distance <= closestDistance then
+                closestHero = obj
+                closestDistance = distance
+            end
+        end
+    end
+    
+    -- Attack the closest hero
+    if closestHero then
+        local heroHumanoid = closestHero:FindFirstChildOfClass("Humanoid")
+        if heroHumanoid then
+            heroHumanoid:TakeDamage(attackDamage)
+            print("💥 Hit " .. closestHero.Name .. " for " .. attackDamage .. " damage! (Distance: " .. math.floor(closestDistance) .. " studs)")
+            
+            -- Visual feedback
+            local heroHRP = closestHero:FindFirstChild("HumanoidRootPart")
+            if heroHRP then
+                local hitEffect = Instance.new("Part")
+                hitEffect.Shape = Enum.PartType.Ball
+                hitEffect.Size = Vector3.new(2, 2, 2)
+                hitEffect.Position = heroHRP.Position
+                hitEffect.BrickColor = BrickColor.new("Bright red")
+                hitEffect.Material = Enum.Material.Neon
+                hitEffect.Anchored = true
+                hitEffect.CanCollide = false
+                hitEffect.Parent = workspace
                 
-                break -- Only hit one enemy per attack
+                game:GetService("Debris"):AddItem(hitEffect, 0.3)
             end
         end
     end
