@@ -387,11 +387,26 @@ function HeroAI.RunAI(heroData)
         if heroData.State == "SeekTreasure" then
             local treasure = workspace:FindFirstChild("Treasure")
             if treasure then
-                HeroAI.MoveToTarget(hero, treasure.Position)
+                -- Calculate position NEXT TO treasure (not on top of it!)
+                local treasurePos = treasure.Position
+                local offset = Vector3.new(
+                    math.random(-4, 4), -- Random position around treasure
+                    0,
+                    math.random(-4, 4)
+                )
+                -- Ensure minimum distance of 3 studs
+                if offset.Magnitude < 3 then
+                    offset = offset.Unit * 3
+                end
+                local targetPos = treasurePos + offset
                 
-                -- Check if reached treasure
+                HeroAI.MoveToTarget(hero, targetPos)
+                
+                -- Check if reached treasure area (within 6 studs)
                 local hrp = hero:FindFirstChild("HumanoidRootPart")
-                if hrp and (hrp.Position - treasure.Position).Magnitude < 5 then
+                if hrp and (hrp.Position - treasurePos).Magnitude < 6 then
+                    -- Face the treasure before grabbing
+                    hrp.CFrame = CFrame.new(hrp.Position, Vector3.new(treasurePos.X, hrp.Position.Y, treasurePos.Z))
                     heroData.State = "StealTreasure"
                 end
             end
