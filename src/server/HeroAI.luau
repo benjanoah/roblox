@@ -10,6 +10,7 @@ local PathfindingService = game:GetService("PathfindingService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local GameConfig = require(ReplicatedStorage.Shared.GameConfig)
+local HeroAnimations = require(script.Parent.HeroAnimations)
 
 local ActiveHeroes = {}
 
@@ -315,6 +316,9 @@ function HeroAI.SpawnHero(spawnPosition)
     }
     
     table.insert(ActiveHeroes, heroData)
+    
+    -- Start walk animation
+    HeroAnimations.StartWalkCycle(hero)
     
     -- Listen for death to clean up
     local humanoid = hero:FindFirstChildOfClass("Humanoid")
