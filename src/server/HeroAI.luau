@@ -437,12 +437,19 @@ function HeroAI.MoveToTarget(hero, targetPosition)
     
     if not humanoid or not hrp then return end
     
-    -- Simple pathfinding
+    -- Check if already close to target (avoid unnecessary pathfinding)
+    if (hrp.Position - targetPosition).Magnitude < 8 then
+        humanoid:MoveTo(targetPosition)
+        return
+    end
+    
+    -- Create path with better settings
     local path = PathfindingService:CreatePath({
         AgentRadius = 2,
         AgentHeight = 5,
         AgentCanJump = true,
         AgentCanClimb = false,
+        WaypointSpacing = 4, -- Fewer waypoints = smoother movement
     })
     
     local success, errorMessage = pcall(function()
@@ -452,26 +459,54 @@ function HeroAI.MoveToTarget(hero, targetPosition)
     if success and path.Status == Enum.PathStatus.Success then
         local waypoints = path:GetWaypoints()
         
-        for i, waypoint in ipairs(waypoints) do
+        -- Start from waypoint 2 (skip current position)
+        for i = 2, #waypoints do
             if humanoid.Health <= 0 or not hero.Parent then break end
             
+            local waypoint = waypoints[i]
             humanoid:MoveTo(waypoint.Position)
             
             if waypoint.Action == Enum.PathWaypointAction.Jump then
                 humanoid.Jump = true
             end
             
-            -- Wait for hero to reach waypoint or timeout
-            local reached = humanoid.MoveToFinished:Wait(3)
+            -- Wait for hero to reach waypoint with timeout
+            local moveConnection
+            local reached = false
             
-            -- If stuck, try next waypoint
-            if not reached then
-                print("Hero stuck, skipping to next waypoint")
+            moveConnection = humanoid.MoveToFinished:Connect(function(didReach)
+                reached = true
+            end)
+            
+            -- Timeout after 2 seconds OR if close enough
+            local startTime = tick()
+            while not reached and tick() - startTime < 2 do
+                task.wait(0.1)
+                
+                -- If close to waypoint, consider it reached
+                if (hrp.Position - waypoint.Position).Magnitude < 4 then
+                    reached = true
+                    break
+                end
+                
+                -- If stuck (not moving), break out
+                if hrp.AssemblyLinearVelocity.Magnitude < 0.5 and tick() - startTime > 0.5 then
+                    break
+                end
+            end
+            
+            moveConnection:Disconnect()
+            
+            -- If stuck for real, try direct path
+            if not reached and i < #waypoints - 1 then
+                -- Skip to next waypoint
+                continue
             end
         end
     else
-        -- Fallback: move directly
+        -- Fallback: move directly (no obstacles)
         humanoid:MoveTo(targetPosition)
+        task.wait(1) -- Give it time to try
     end
 end
 
