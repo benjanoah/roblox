@@ -25,6 +25,7 @@ local function CreateHeroBody(position)
     hrp.Name = "HumanoidRootPart"
     hrp.Size = Vector3.new(2, 2, 1)
     hrp.Position = position
+    hrp.CFrame = CFrame.new(position) * CFrame.Angles(0, math.rad(180), 0) -- Face forward!
     hrp.BrickColor = BrickColor.new("Bright blue")
     hrp.TopSurface = Enum.SurfaceType.Smooth
     hrp.BottomSurface = Enum.SurfaceType.Smooth
