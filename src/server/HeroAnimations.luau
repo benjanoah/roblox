@@ -15,38 +15,38 @@ local ActiveAnimations = {}
 function HeroAnimations.StartWalkCycle(hero)
     local humanoid = hero:FindFirstChildOfClass("Humanoid")
     local hrp = hero:FindFirstChild("HumanoidRootPart")
-    
-    if not humanoid or not hrp then 
+
+    if not humanoid or not hrp then
         warn("⚠️ No humanoid or HRP found for walk animation!")
-        return 
+        return
     end
-    
+
     -- Find leg joints (Motor6D)
     local leftHip = hrp:FindFirstChild("Left Hip")
     local rightHip = hrp:FindFirstChild("Right Hip")
-    
+
     print("🔍 Animation setup - LeftHip:", leftHip, "RightHip:", rightHip)
-    
+
     -- Find arms (Weld, but we can still animate)
     local leftArm = hero:FindFirstChild("Left Arm")
     local rightArm = hero:FindFirstChild("Right Arm")
-    
-    if not leftHip or not rightHip then 
+
+    if not leftHip or not rightHip then
         warn("⚠️ Motor6D joints not found! Can't animate.")
-        return 
+        return
     end
-    
+
     print("✅ Starting walk animation for hero")
-    
+
     -- Store original C0 positions
     local leftHipOriginal = leftHip.C0
     local rightHipOriginal = rightHip.C0
-    
+
     local leftArmWeld = leftArm and leftArm:FindFirstChildOfClass("Weld")
     local rightArmWeld = rightArm and rightArm:FindFirstChildOfClass("Weld")
     local leftArmOriginal = leftArmWeld and leftArmWeld.C0
     local rightArmOriginal = rightArmWeld and rightArmWeld.C0
-    
+
     -- Animation state
     local animData = {
         Hero = hero,
@@ -60,9 +60,9 @@ function HeroAnimations.StartWalkCycle(hero)
         LeftArmOriginal = leftArmOriginal,
         RightArmOriginal = rightArmOriginal,
     }
-    
+
     table.insert(ActiveAnimations, animData)
-    
+
     -- Animation loop
     local connection
     connection = RunService.Heartbeat:Connect(function(deltaTime)
@@ -81,28 +81,26 @@ function HeroAnimations.StartWalkCycle(hero)
             end
             return
         end
-        
+
         -- Animate ALWAYS while hero is alive (they're always pathfinding)
-        animData.Time += deltaTime * 6 -- Faster animation speed
+        animData.Time += deltaTime * 3 -- Animation speed
         
-        -- Sine wave for leg swing (opposite phases) - BIGGER swing
-        local leftSwing = math.sin(animData.Time) * 0.8
-        local rightSwing = math.sin(animData.Time + math.pi) * 0.8
+        -- Sine wave for leg swing (opposite phases) - MASSIVE swing for testing
+        local leftSwing = math.sin(animData.Time) * 1.2
+        local rightSwing = math.sin(animData.Time + math.pi) * 1.2
         
-        -- Check if actually moving (for debug)
-        local moveDirection = humanoid.MoveDirection
-        if moveDirection.Magnitude > 0.1 then
-            
-        -- Apply rotation to legs (swing back and forth)
-        leftHip.C0 = animData.LeftOriginal * CFrame.Angles(leftSwing, 0, 0)
-        rightHip.C0 = animData.RightOriginal * CFrame.Angles(rightSwing, 0, 0)
-        
+        -- Try different rotation axes (after 180° flip, orientation changed)
+        -- X-axis = forward/back swing
+        -- Y-axis = side-to-side
+        -- Z-axis = rotation
+        leftHip.C0 = animData.LeftOriginal * CFrame.Angles(-leftSwing, 0, 0)
+        rightHip.C0 = animData.RightOriginal * CFrame.Angles(-rightSwing, 0, 0)
+
         -- Arm swing (opposite to legs for natural walking)
         if animData.LeftArmWeld and animData.RightArmWeld then
-            local armSwing = 0.3
-            animData.LeftArmWeld.C0 = animData.LeftArmOriginal * CFrame.Angles(rightSwing * armSwing, 0, 0)
-            animData.RightArmWeld.C0 = animData.RightArmOriginal * CFrame.Angles(leftSwing * armSwing, 0, 0)
-        end
+            local armSwing = 0.4
+            animData.LeftArmWeld.C0 = animData.LeftArmOriginal * CFrame.Angles(-rightSwing * armSwing, 0, 0)
+            animData.RightArmWeld.C0 = animData.RightArmOriginal * CFrame.Angles(-leftSwing * armSwing, 0, 0)
         end
     end)
 end
