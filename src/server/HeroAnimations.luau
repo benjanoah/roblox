@@ -82,9 +82,11 @@ function HeroAnimations.StartWalkCycle(hero)
             return
         end
 
-        -- Only animate when moving
-        local moveDirection = humanoid.MoveDirection
-        if moveDirection.Magnitude > 0.1 then
+        -- Only animate when actually moving (check velocity, not MoveDirection)
+        local velocity = hrp.AssemblyLinearVelocity
+        local speed = Vector3.new(velocity.X, 0, velocity.Z).Magnitude -- Ignore Y (jumping/falling)
+        
+        if speed > 1 then -- Moving if speed > 1 stud/sec
             -- Walking animation
             animData.Time += deltaTime * 4 -- Animation speed (4 = natural walk pace)
             
