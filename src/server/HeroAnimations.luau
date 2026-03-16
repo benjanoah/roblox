@@ -83,16 +83,13 @@ function HeroAnimations.StartWalkCycle(hero)
         end
 
         -- Animate ALWAYS while hero is alive (they're always pathfinding)
-        animData.Time += deltaTime * 3 -- Animation speed
+        animData.Time += deltaTime * 4 -- Animation speed (4 = natural walk pace)
         
-        -- Sine wave for leg swing (opposite phases) - MASSIVE swing for testing
-        local leftSwing = math.sin(animData.Time) * 1.2
-        local rightSwing = math.sin(animData.Time + math.pi) * 1.2
+        -- Sine wave for leg swing (opposite phases) - Natural walking motion
+        local leftSwing = math.sin(animData.Time) * 0.6
+        local rightSwing = math.sin(animData.Time + math.pi) * 0.6
         
-        -- Try different rotation axes (after 180° flip, orientation changed)
-        -- X-axis = forward/back swing
-        -- Y-axis = side-to-side
-        -- Z-axis = rotation
+        -- Negative rotation because of 180° body flip
         leftHip.C0 = animData.LeftOriginal * CFrame.Angles(-leftSwing, 0, 0)
         rightHip.C0 = animData.RightOriginal * CFrame.Angles(-rightSwing, 0, 0)
 
