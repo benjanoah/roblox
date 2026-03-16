@@ -256,7 +256,7 @@ local function CreateHeroBody(position)
     local sword = Instance.new("Part")
     sword.Name = "Sword"
     sword.Size = Vector3.new(0.2, 3, 0.5)
-    sword.Position = rightArm.Position + Vector3.new(0, -1, 1.5)
+    sword.Position = rightArm.Position + Vector3.new(0, -1, -1.5)
     sword.BrickColor = BrickColor.new("Silver")
     sword.Material = Enum.Material.Metal
     sword.TopSurface = Enum.SurfaceType.Smooth
@@ -267,7 +267,7 @@ local function CreateHeroBody(position)
     local swordWeld = Instance.new("Weld")
     swordWeld.Part0 = rightArm
     swordWeld.Part1 = sword
-    swordWeld.C0 = CFrame.new(0, -1, 1.5) * CFrame.Angles(math.rad(-90), 0, 0) -- Rotate -90° so handle is at hand
+    swordWeld.C0 = CFrame.new(0, -1, -1.5) * CFrame.Angles(math.rad(90), 0, 0) -- Point blade forward
     swordWeld.Parent = sword
     
     -- Sword handle (brown, at top of blade where hand grips)
