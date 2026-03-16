@@ -16,17 +16,27 @@ function HeroAnimations.StartWalkCycle(hero)
     local humanoid = hero:FindFirstChildOfClass("Humanoid")
     local hrp = hero:FindFirstChild("HumanoidRootPart")
     
-    if not humanoid or not hrp then return end
+    if not humanoid or not hrp then 
+        warn("⚠️ No humanoid or HRP found for walk animation!")
+        return 
+    end
     
     -- Find leg joints (Motor6D)
     local leftHip = hrp:FindFirstChild("Left Hip")
     local rightHip = hrp:FindFirstChild("Right Hip")
     
+    print("🔍 Animation setup - LeftHip:", leftHip, "RightHip:", rightHip)
+    
     -- Find arms (Weld, but we can still animate)
     local leftArm = hero:FindFirstChild("Left Arm")
     local rightArm = hero:FindFirstChild("Right Arm")
     
-    if not leftHip or not rightHip then return end
+    if not leftHip or not rightHip then 
+        warn("⚠️ Motor6D joints not found! Can't animate.")
+        return 
+    end
+    
+    print("✅ Starting walk animation for hero")
     
     -- Store original C0 positions
     local leftHipOriginal = leftHip.C0
