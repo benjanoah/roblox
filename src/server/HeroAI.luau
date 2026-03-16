@@ -138,15 +138,153 @@ local function CreateHeroBody(position)
     humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
     humanoid.Parent = hero
     
-    -- Body Colors (optional, makes it look nicer)
+    -- Body Colors (knight theme)
     local bodyColors = Instance.new("BodyColors")
-    bodyColors.HeadColor = BrickColor.new("Light orange")
-    bodyColors.TorsoColor = BrickColor.new("Bright blue")
-    bodyColors.LeftArmColor = BrickColor.new("Light orange")
-    bodyColors.RightArmColor = BrickColor.new("Light orange")
-    bodyColors.LeftLegColor = BrickColor.new("Bright green")
-    bodyColors.RightLegColor = BrickColor.new("Bright green")
+    bodyColors.HeadColor = BrickColor.new("Medium stone grey") -- Metal skin
+    bodyColors.TorsoColor = BrickColor.new("Dark stone grey")  -- Armor
+    bodyColors.LeftArmColor = BrickColor.new("Medium stone grey")
+    bodyColors.RightArmColor = BrickColor.new("Medium stone grey")
+    bodyColors.LeftLegColor = BrickColor.new("Dark stone grey") -- Boots
+    bodyColors.RightLegColor = BrickColor.new("Dark stone grey")
     bodyColors.Parent = hero
+    
+    -- KNIGHT OUTFIT --
+    
+    -- Helmet (on head)
+    local helmet = Instance.new("Part")
+    helmet.Name = "Helmet"
+    helmet.Size = Vector3.new(2.2, 1.2, 1.2) -- Slightly bigger than head
+    helmet.Position = head.Position
+    helmet.BrickColor = BrickColor.new("Silver")
+    helmet.Material = Enum.Material.Metal
+    helmet.TopSurface = Enum.SurfaceType.Smooth
+    helmet.BottomSurface = Enum.SurfaceType.Smooth
+    helmet.Parent = hero
+    
+    local helmetWeld = Instance.new("Weld")
+    helmetWeld.Part0 = head
+    helmetWeld.Part1 = helmet
+    helmetWeld.C0 = CFrame.new(0, 0, 0)
+    helmetWeld.Parent = helmet
+    
+    -- Visor (front of helmet)
+    local visor = Instance.new("Part")
+    visor.Name = "Visor"
+    visor.Size = Vector3.new(1.5, 0.3, 0.1)
+    visor.Position = head.Position + Vector3.new(0, 0, 0.6)
+    visor.BrickColor = BrickColor.new("Really black")
+    visor.Material = Enum.Material.Glass
+    visor.TopSurface = Enum.SurfaceType.Smooth
+    visor.BottomSurface = Enum.SurfaceType.Smooth
+    visor.Parent = hero
+    
+    local visorWeld = Instance.new("Weld")
+    visorWeld.Part0 = helmet
+    visorWeld.Part1 = visor
+    visorWeld.C0 = CFrame.new(0, 0, 0.6)
+    visorWeld.Parent = visor
+    
+    -- Chestplate (over torso)
+    local chestplate = Instance.new("Part")
+    chestplate.Name = "Chestplate"
+    chestplate.Size = Vector3.new(2.3, 2.2, 1.1)
+    chestplate.Position = torso.Position
+    chestplate.BrickColor = BrickColor.new("Silver")
+    chestplate.Material = Enum.Material.Metal
+    chestplate.TopSurface = Enum.SurfaceType.Smooth
+    chestplate.BottomSurface = Enum.SurfaceType.Smooth
+    chestplate.Parent = hero
+    
+    local chestplateWeld = Instance.new("Weld")
+    chestplateWeld.Part0 = torso
+    chestplateWeld.Part1 = chestplate
+    chestplateWeld.C0 = CFrame.new(0, 0, 0)
+    chestplateWeld.Parent = chestplate
+    
+    -- Blue emblem on chest
+    local emblem = Instance.new("Part")
+    emblem.Name = "Emblem"
+    emblem.Size = Vector3.new(0.8, 0.8, 0.05)
+    emblem.Position = torso.Position + Vector3.new(0, 0.3, 0.6)
+    emblem.BrickColor = BrickColor.new("Bright blue")
+    emblem.Material = Enum.Material.Neon
+    emblem.TopSurface = Enum.SurfaceType.Smooth
+    emblem.BottomSurface = Enum.SurfaceType.Smooth
+    emblem.Parent = hero
+    
+    local emblemWeld = Instance.new("Weld")
+    emblemWeld.Part0 = chestplate
+    emblemWeld.Part1 = emblem
+    emblemWeld.C0 = CFrame.new(0, 0.3, 0.6)
+    emblemWeld.Parent = emblem
+    
+    -- Shield (on left arm)
+    local shield = Instance.new("Part")
+    shield.Name = "Shield"
+    shield.Size = Vector3.new(0.3, 2, 1.5)
+    shield.Position = leftArm.Position + Vector3.new(-0.5, 0, 0)
+    shield.BrickColor = BrickColor.new("Silver")
+    shield.Material = Enum.Material.Metal
+    shield.TopSurface = Enum.SurfaceType.Smooth
+    shield.BottomSurface = Enum.SurfaceType.Smooth
+    shield.Parent = hero
+    
+    local shieldWeld = Instance.new("Weld")
+    shieldWeld.Part0 = leftArm
+    shieldWeld.Part1 = shield
+    shieldWeld.C0 = CFrame.new(-0.5, 0, 0)
+    shieldWeld.Parent = shield
+    
+    -- Shield emblem (blue cross)
+    local shieldEmblem = Instance.new("Part")
+    shieldEmblem.Name = "ShieldEmblem"
+    shieldEmblem.Size = Vector3.new(0.1, 1.5, 0.3)
+    shieldEmblem.Position = shield.Position + Vector3.new(-0.2, 0, 0)
+    shieldEmblem.BrickColor = BrickColor.new("Bright blue")
+    shieldEmblem.Material = Enum.Material.Neon
+    shieldEmblem.TopSurface = Enum.SurfaceType.Smooth
+    shieldEmblem.BottomSurface = Enum.SurfaceType.Smooth
+    shieldEmblem.Parent = hero
+    
+    local shieldEmblemWeld = Instance.new("Weld")
+    shieldEmblemWeld.Part0 = shield
+    shieldEmblemWeld.Part1 = shieldEmblem
+    shieldEmblemWeld.C0 = CFrame.new(-0.2, 0, 0)
+    shieldEmblemWeld.Parent = shieldEmblem
+    
+    -- Sword (on right arm)
+    local sword = Instance.new("Part")
+    sword.Name = "Sword"
+    sword.Size = Vector3.new(0.2, 3, 0.5)
+    sword.Position = rightArm.Position + Vector3.new(0.5, -1, 0)
+    sword.BrickColor = BrickColor.new("Silver")
+    sword.Material = Enum.Material.Metal
+    sword.TopSurface = Enum.SurfaceType.Smooth
+    sword.BottomSurface = Enum.SurfaceType.Smooth
+    sword.Parent = hero
+    
+    local swordWeld = Instance.new("Weld")
+    swordWeld.Part0 = rightArm
+    swordWeld.Part1 = sword
+    swordWeld.C0 = CFrame.new(0.5, -1, 0) * CFrame.Angles(math.rad(0), 0, 0)
+    swordWeld.Parent = sword
+    
+    -- Sword handle (brown)
+    local swordHandle = Instance.new("Part")
+    swordHandle.Name = "SwordHandle"
+    swordHandle.Size = Vector3.new(0.3, 0.8, 0.3)
+    swordHandle.Position = sword.Position + Vector3.new(0, 1.5, 0)
+    swordHandle.BrickColor = BrickColor.new("Dark orange")
+    swordHandle.Material = Enum.Material.Wood
+    swordHandle.TopSurface = Enum.SurfaceType.Smooth
+    swordHandle.BottomSurface = Enum.SurfaceType.Smooth
+    swordHandle.Parent = hero
+    
+    local handleWeld = Instance.new("Weld")
+    handleWeld.Part0 = sword
+    handleWeld.Part1 = swordHandle
+    handleWeld.C0 = CFrame.new(0, 1.5, 0)
+    handleWeld.Parent = swordHandle
     
     return hero
 end
