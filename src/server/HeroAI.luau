@@ -395,18 +395,26 @@ function HeroAI.RunAI(heroData)
             end
             
         elseif heroData.State == "StealTreasure" then
-            print(hero.Name .. " is stealing treasure!")
-            
-            -- Play grabbing animation
-            local grabDuration = HeroAnimations.PlayGrabAnimation(hero)
-            
-            -- Wait for animation to finish
-            task.wait(grabDuration)
-            
-            -- Now run away with treasure!
-            heroData.HasTreasure = true
-            humanoid.WalkSpeed = GameConfig.Hero.RunSpeed
-            heroData.State = "Escape"
+            -- Only do this ONCE (state change happens inside)
+            if not heroData.IsGrabbing then
+                heroData.IsGrabbing = true
+                print("📦 " .. hero.Name .. " reached treasure! Starting grab animation...")
+                
+                task.spawn(function()
+                    -- Play grabbing animation
+                    local grabDuration = HeroAnimations.PlayGrabAnimation(hero)
+                    
+                    -- Wait for animation to finish
+                    task.wait(grabDuration)
+                    
+                    -- Now run away with treasure!
+                    heroData.HasTreasure = true
+                    heroData.IsGrabbing = false
+                    humanoid.WalkSpeed = GameConfig.Hero.RunSpeed
+                    heroData.State = "Escape"
+                    print("🏃 " .. hero.Name .. " grabbed treasure! Running to exit!")
+                end)
+            end
             
         elseif heroData.State == "Escape" then
             local exit = workspace:FindFirstChild("Exit")

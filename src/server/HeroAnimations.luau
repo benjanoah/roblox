@@ -150,6 +150,35 @@ function HeroAnimations.PlayGrabAnimation(hero)
     local originalSpeed = humanoid.WalkSpeed
     humanoid.WalkSpeed = 0
     
+    -- Create progress bar UI (BillboardGui above head)
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "GrabProgress"
+    billboard.Size = UDim2.new(4, 0, 0.5, 0)
+    billboard.StudsOffset = Vector3.new(0, 3, 0) -- Above head
+    billboard.AlwaysOnTop = true
+    billboard.Parent = hrp
+    
+    local background = Instance.new("Frame")
+    background.Size = UDim2.new(1, 0, 1, 0)
+    background.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    background.BorderSizePixel = 2
+    background.Parent = billboard
+    
+    local progressBar = Instance.new("Frame")
+    progressBar.Size = UDim2.new(0, 0, 1, 0) -- Start at 0%
+    progressBar.BackgroundColor3 = Color3.fromRGB(255, 200, 0) -- Gold color
+    progressBar.BorderSizePixel = 0
+    progressBar.Parent = background
+    
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = "📦 Grabbing..."
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextScaled = true
+    label.Font = Enum.Font.GothamBold
+    label.Parent = background
+    
     -- Animation coroutine
     task.spawn(function()
         local animTime = 0
@@ -160,6 +189,10 @@ function HeroAnimations.PlayGrabAnimation(hero)
             animTime += 0.03
             
             local progress = animTime / grabDuration
+            
+            -- Update progress bar
+            progressBar.Size = UDim2.new(progress, 0, 1, 0)
+            label.Text = "📦 " .. math.floor(progress * 100) .. "%"
             
             if progress < 0.5 then
                 -- Phase 1: Crouch down (0 -> 0.5)
@@ -197,6 +230,16 @@ function HeroAnimations.PlayGrabAnimation(hero)
         rightHip.C0 = rightHipOriginal
         if leftArmWeld then leftArmWeld.C0 = leftArmOriginal end
         if rightArmWeld then rightArmWeld.C0 = rightArmOriginal end
+        
+        -- Complete! Update bar
+        progressBar.Size = UDim2.new(1, 0, 1, 0)
+        progressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Green = complete
+        label.Text = "✅ Grabbed!"
+        
+        task.wait(0.5) -- Show complete message briefly
+        
+        -- Remove progress bar
+        billboard:Destroy()
         
         -- Restore walk speed
         humanoid.WalkSpeed = originalSpeed
