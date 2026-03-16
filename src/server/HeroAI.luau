@@ -172,7 +172,7 @@ local function CreateHeroBody(position)
     local visor = Instance.new("Part")
     visor.Name = "Visor"
     visor.Size = Vector3.new(1.5, 0.3, 0.1)
-    visor.Position = head.Position + Vector3.new(0, 0, 0.6)
+    visor.Position = head.Position + Vector3.new(0, 0, -0.6)
     visor.BrickColor = BrickColor.new("Really black")
     visor.Material = Enum.Material.Glass
     visor.TopSurface = Enum.SurfaceType.Smooth
@@ -182,7 +182,7 @@ local function CreateHeroBody(position)
     local visorWeld = Instance.new("Weld")
     visorWeld.Part0 = helmet
     visorWeld.Part1 = visor
-    visorWeld.C0 = CFrame.new(0, 0, 0.6)
+    visorWeld.C0 = CFrame.new(0, 0, -0.6) -- Front side (negative Z after 180° rotation)
     visorWeld.Parent = visor
     
     -- Chestplate (over torso)
@@ -206,7 +206,7 @@ local function CreateHeroBody(position)
     local emblem = Instance.new("Part")
     emblem.Name = "Emblem"
     emblem.Size = Vector3.new(0.8, 0.8, 0.05)
-    emblem.Position = torso.Position + Vector3.new(0, 0.3, 0.6)
+    emblem.Position = torso.Position + Vector3.new(0, 0.3, -0.6)
     emblem.BrickColor = BrickColor.new("Bright blue")
     emblem.Material = Enum.Material.Neon
     emblem.TopSurface = Enum.SurfaceType.Smooth
@@ -216,7 +216,7 @@ local function CreateHeroBody(position)
     local emblemWeld = Instance.new("Weld")
     emblemWeld.Part0 = chestplate
     emblemWeld.Part1 = emblem
-    emblemWeld.C0 = CFrame.new(0, 0.3, 0.6)
+    emblemWeld.C0 = CFrame.new(0, 0.3, -0.6) -- Front of chest
     emblemWeld.Parent = emblem
     
     -- Shield (on left arm)
