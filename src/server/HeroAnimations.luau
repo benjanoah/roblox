@@ -51,6 +51,7 @@ function HeroAnimations.StartWalkCycle(hero)
     local animData = {
         Hero = hero,
         Time = 0,
+        AnimationBlend = 0, -- Smooth blend between idle and walk (0=idle, 1=walk)
         LeftHip = leftHip,
         RightHip = rightHip,
         LeftArmWeld = leftArmWeld,
@@ -82,17 +83,22 @@ function HeroAnimations.StartWalkCycle(hero)
             return
         end
 
-        -- Only animate when actually moving (check velocity, not MoveDirection)
+        -- Check if actually moving (velocity-based, more reliable than MoveDirection)
         local velocity = hrp.AssemblyLinearVelocity
         local speed = Vector3.new(velocity.X, 0, velocity.Z).Magnitude -- Ignore Y (jumping/falling)
         
-        if speed > 1 then -- Moving if speed > 1 stud/sec
-            -- Walking animation
+        -- Smooth blend: gradually fade animation in/out to avoid jerky motion
+        local targetBlend = speed > 0.5 and 1 or 0 -- Target: 1=walking, 0=idle
+        local blendSpeed = 5 -- How fast to transition
+        animData.AnimationBlend = animData.AnimationBlend + (targetBlend - animData.AnimationBlend) * blendSpeed * deltaTime
+        
+        -- Always update animation time when blend > 0
+        if animData.AnimationBlend > 0.01 then
             animData.Time += deltaTime * 4 -- Animation speed (4 = natural walk pace)
             
             -- Sine wave for leg swing (opposite phases) - Natural walking motion
-            local leftSwing = math.sin(animData.Time) * 0.6
-            local rightSwing = math.sin(animData.Time + math.pi) * 0.6
+            local leftSwing = math.sin(animData.Time) * 0.6 * animData.AnimationBlend
+            local rightSwing = math.sin(animData.Time + math.pi) * 0.6 * animData.AnimationBlend
             
             -- Negative rotation because of 180° body flip
             leftHip.C0 = animData.LeftOriginal * CFrame.Angles(-leftSwing, 0, 0)
@@ -100,12 +106,12 @@ function HeroAnimations.StartWalkCycle(hero)
             
             -- Arm swing (opposite to legs for natural walking)
             if animData.LeftArmWeld and animData.RightArmWeld then
-                local armSwing = 0.4
+                local armSwing = 0.4 * animData.AnimationBlend
                 animData.LeftArmWeld.C0 = animData.LeftArmOriginal * CFrame.Angles(-rightSwing * armSwing, 0, 0)
                 animData.RightArmWeld.C0 = animData.RightArmOriginal * CFrame.Angles(-leftSwing * armSwing, 0, 0)
             end
         else
-            -- Idle - reset to neutral pose
+            -- Fully idle
             leftHip.C0 = animData.LeftOriginal
             rightHip.C0 = animData.RightOriginal
             if animData.LeftArmWeld then animData.LeftArmWeld.C0 = animData.LeftArmOriginal end
