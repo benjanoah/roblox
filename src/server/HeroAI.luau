@@ -304,6 +304,8 @@ function HeroAI.SpawnHero(spawnPosition)
     
     hero.Parent = workspace
     
+    print("✅ Hero created: " .. hero.Name .. " | Humanoid: " .. tostring(hero:FindFirstChildOfClass("Humanoid")))
+    
     -- Wait for character to fully load
     task.wait(0.1)
     

@@ -16,18 +16,26 @@ local EntityHealth = {}
     Initialize health for an entity
 ]]
 function CombatSystem.InitializeHealth(entity, maxHealth)
-    if not entity then return end
+    if not entity then 
+        warn("⚠️ CombatSystem: nil entity passed to InitializeHealth!")
+        return 
+    end
     
     EntityHealth[entity] = {
         Current = maxHealth,
         Max = maxHealth
     }
     
+    print("💊 Health initialized for " .. entity.Name .. ": " .. maxHealth .. " HP")
+    
     -- Create health display (optional, for debugging)
     local humanoid = entity:FindFirstChildOfClass("Humanoid")
     if humanoid then
         humanoid.MaxHealth = maxHealth
         humanoid.Health = maxHealth
+        print("  ✅ Humanoid health set: " .. humanoid.Health .. "/" .. humanoid.MaxHealth)
+    else
+        warn("  ⚠️ No Humanoid found in " .. entity.Name)
     end
 end
 
