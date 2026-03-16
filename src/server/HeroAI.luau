@@ -412,28 +412,12 @@ function HeroAI.RunAI(heroData)
             end
             
         elseif heroData.State == "StealTreasure" then
-            -- Only do this ONCE and WAIT for animation to complete
-            if not heroData.IsGrabbing then
-                heroData.IsGrabbing = true
-                print("📦 Hero reached treasure! Starting grab animation...")
-                
-                -- Play grabbing animation (blocking, not async!)
-                local grabDuration = HeroAnimations.PlayGrabAnimation(hero)
-                
-                -- WAIT for animation to finish before continuing
-                print("  ⏱️ Waiting for animation...")
-                task.wait(grabDuration + 0.5) -- Extra 0.5s for "Grabbed!" message
-                
-                -- Now run away with treasure!
-                heroData.HasTreasure = true
-                heroData.IsGrabbing = false
-                heroData.State = "Escape"
-                if humanoid then
-                    humanoid.WalkSpeed = GameConfig.Hero.RunSpeed
-                end
-                print("🏃 Hero grabbed treasure! Running to exit!")
+            print("📦 Hero grabbed treasure! Running to exit!")
+            heroData.HasTreasure = true
+            if humanoid then
+                humanoid.WalkSpeed = GameConfig.Hero.RunSpeed
             end
-            -- While grabbing, stay in this state (do nothing)
+            heroData.State = "Escape"
             
         elseif heroData.State == "Escape" then
             local exit = workspace:FindFirstChild("Exit")
