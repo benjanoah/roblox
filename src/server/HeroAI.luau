@@ -396,6 +396,14 @@ function HeroAI.RunAI(heroData)
             
         elseif heroData.State == "StealTreasure" then
             print(hero.Name .. " is stealing treasure!")
+            
+            -- Play grabbing animation
+            local grabDuration = HeroAnimations.PlayGrabAnimation(hero)
+            
+            -- Wait for animation to finish
+            task.wait(grabDuration)
+            
+            -- Now run away with treasure!
             heroData.HasTreasure = true
             humanoid.WalkSpeed = GameConfig.Hero.RunSpeed
             heroData.State = "Escape"

@@ -121,6 +121,91 @@ function HeroAnimations.StartWalkCycle(hero)
 end
 
 --[[
+    Play grabbing animation (crouch down, grab treasure)
+]]
+function HeroAnimations.PlayGrabAnimation(hero)
+    local humanoid = hero:FindFirstChildOfClass("Humanoid")
+    local hrp = hero:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoid or not hrp then return end
+    
+    -- Find joints
+    local leftHip = hrp:FindFirstChild("Left Hip")
+    local rightHip = hrp:FindFirstChild("Right Hip")
+    local leftArm = hero:FindFirstChild("Left Arm")
+    local rightArm = hero:FindFirstChild("Right Arm")
+    
+    if not leftHip or not rightHip then return end
+    
+    -- Store originals
+    local leftHipOriginal = leftHip.C0
+    local rightHipOriginal = rightHip.C0
+    
+    local leftArmWeld = leftArm and leftArm:FindFirstChildOfClass("Weld")
+    local rightArmWeld = rightArm and rightArm:FindFirstChildOfClass("Weld")
+    local leftArmOriginal = leftArmWeld and leftArmWeld.C0
+    local rightArmOriginal = rightArmWeld and rightArmWeld.C0
+    
+    -- Stop walking
+    local originalSpeed = humanoid.WalkSpeed
+    humanoid.WalkSpeed = 0
+    
+    -- Animation coroutine
+    task.spawn(function()
+        local animTime = 0
+        local grabDuration = 1.5 -- 1.5 seconds total
+        
+        while animTime < grabDuration do
+            task.wait(0.03)
+            animTime += 0.03
+            
+            local progress = animTime / grabDuration
+            
+            if progress < 0.5 then
+                -- Phase 1: Crouch down (0 -> 0.5)
+                local crouchProgress = progress * 2 -- 0 to 1
+                local crouchAngle = math.sin(crouchProgress * math.pi * 0.5) * 0.8 -- Smooth ease
+                
+                -- Bend legs
+                leftHip.C0 = leftHipOriginal * CFrame.Angles(crouchAngle, 0, 0)
+                rightHip.C0 = rightHipOriginal * CFrame.Angles(crouchAngle, 0, 0)
+                
+                -- Arms down
+                if leftArmWeld and rightArmWeld then
+                    leftArmWeld.C0 = leftArmOriginal * CFrame.Angles(crouchAngle * 1.5, 0, 0)
+                    rightArmWeld.C0 = rightArmOriginal * CFrame.Angles(crouchAngle * 1.5, 0, 0)
+                end
+            else
+                -- Phase 2: Stand back up (0.5 -> 1.0)
+                local standProgress = (progress - 0.5) * 2 -- 0 to 1
+                local standAngle = (1 - math.sin(standProgress * math.pi * 0.5)) * 0.8
+                
+                -- Unbend legs
+                leftHip.C0 = leftHipOriginal * CFrame.Angles(standAngle, 0, 0)
+                rightHip.C0 = rightHipOriginal * CFrame.Angles(standAngle, 0, 0)
+                
+                -- Arms up
+                if leftArmWeld and rightArmWeld then
+                    leftArmWeld.C0 = leftArmOriginal * CFrame.Angles(standAngle * 1.5, 0, 0)
+                    rightArmWeld.C0 = rightArmOriginal * CFrame.Angles(standAngle * 1.5, 0, 0)
+                end
+            end
+        end
+        
+        -- Reset to original
+        leftHip.C0 = leftHipOriginal
+        rightHip.C0 = rightHipOriginal
+        if leftArmWeld then leftArmWeld.C0 = leftArmOriginal end
+        if rightArmWeld then rightArmWeld.C0 = rightArmOriginal end
+        
+        -- Restore walk speed
+        humanoid.WalkSpeed = originalSpeed
+    end)
+    
+    return grabDuration -- Return animation duration
+end
+
+--[[
     Clean up all animations
 ]]
 function HeroAnimations.CleanupAll()
