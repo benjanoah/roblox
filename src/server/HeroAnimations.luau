@@ -82,31 +82,27 @@ function HeroAnimations.StartWalkCycle(hero)
             return
         end
         
-        -- Only animate if moving
+        -- Animate ALWAYS while hero is alive (they're always pathfinding)
+        animData.Time += deltaTime * 6 -- Faster animation speed
+        
+        -- Sine wave for leg swing (opposite phases) - BIGGER swing
+        local leftSwing = math.sin(animData.Time) * 0.8
+        local rightSwing = math.sin(animData.Time + math.pi) * 0.8
+        
+        -- Check if actually moving (for debug)
         local moveDirection = humanoid.MoveDirection
         if moveDirection.Magnitude > 0.1 then
-            animData.Time += deltaTime * 6 -- Faster animation speed
             
-            -- Sine wave for leg swing (opposite phases) - BIGGER swing
-            local leftSwing = math.sin(animData.Time) * 0.8
-            local rightSwing = math.sin(animData.Time + math.pi) * 0.8
-            
-            -- Apply rotation to legs (swing back and forth)
-            leftHip.C0 = animData.LeftOriginal * CFrame.Angles(leftSwing, 0, 0)
-            rightHip.C0 = animData.RightOriginal * CFrame.Angles(rightSwing, 0, 0)
-            
-            -- Arm swing (opposite to legs for natural walking)
-            if animData.LeftArmWeld and animData.RightArmWeld then
-                local armSwing = 0.3
-                animData.LeftArmWeld.C0 = animData.LeftArmOriginal * CFrame.Angles(rightSwing * armSwing, 0, 0)
-                animData.RightArmWeld.C0 = animData.RightArmOriginal * CFrame.Angles(leftSwing * armSwing, 0, 0)
-            end
-        else
-            -- Reset to idle position
-            leftHip.C0 = animData.LeftOriginal
-            rightHip.C0 = animData.RightOriginal
-            if animData.LeftArmWeld then animData.LeftArmWeld.C0 = animData.LeftArmOriginal end
-            if animData.RightArmWeld then animData.RightArmWeld.C0 = animData.RightArmOriginal end
+        -- Apply rotation to legs (swing back and forth)
+        leftHip.C0 = animData.LeftOriginal * CFrame.Angles(leftSwing, 0, 0)
+        rightHip.C0 = animData.RightOriginal * CFrame.Angles(rightSwing, 0, 0)
+        
+        -- Arm swing (opposite to legs for natural walking)
+        if animData.LeftArmWeld and animData.RightArmWeld then
+            local armSwing = 0.3
+            animData.LeftArmWeld.C0 = animData.LeftArmOriginal * CFrame.Angles(rightSwing * armSwing, 0, 0)
+            animData.RightArmWeld.C0 = animData.RightArmOriginal * CFrame.Angles(leftSwing * armSwing, 0, 0)
+        end
         end
     end)
 end
