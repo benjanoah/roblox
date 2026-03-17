@@ -13,10 +13,13 @@ function BearTrap.new(position)
     
     self.isActive = true
     self.isTriggered = false
-    self.trapRadius = 2.5 -- Trigger distance
+    self.trapRadius = 6 -- Trigger distance (increased from 2.5)
     
     -- Create trap model
     self:CreateModel(position)
+    
+    -- DEBUG: Visual trigger zone
+    self:CreateDebugSphere()
     
     -- Start checking for heroes
     self:StartTriggerCheck()
@@ -99,6 +102,25 @@ function BearTrap:CreateModel(position)
     self.leftJaw = leftJaw
     self.rightJaw = rightJaw
     self.position = position
+end
+
+function BearTrap:CreateDebugSphere()
+    -- Red transparent sphere showing trigger zone
+    local debugSphere = Instance.new("Part")
+    debugSphere.Name = "TriggerZone"
+    debugSphere.Shape = Enum.PartType.Ball
+    debugSphere.Size = Vector3.new(self.trapRadius * 2, self.trapRadius * 2, self.trapRadius * 2)
+    debugSphere.Position = self.position + Vector3.new(0, self.trapRadius, 0)
+    debugSphere.Transparency = 0.8
+    debugSphere.Color = Color3.fromRGB(255, 0, 0)
+    debugSphere.Material = Enum.Material.Neon
+    debugSphere.Anchored = true
+    debugSphere.CanCollide = false
+    debugSphere.Parent = workspace
+    
+    self.debugSphere = debugSphere
+    
+    print("🔴 Debug sphere created at " .. tostring(self.position) .. " with radius " .. self.trapRadius)
 end
 
 function BearTrap:StartTriggerCheck()
@@ -212,6 +234,7 @@ function BearTrap:Destroy()
     if self.base then self.base:Destroy() end
     if self.leftJaw then self.leftJaw:Destroy() end
     if self.rightJaw then self.rightJaw:Destroy() end
+    if self.debugSphere then self.debugSphere:Destroy() end
     
     print("🗑️ Bear trap removed")
 end
