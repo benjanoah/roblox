@@ -126,9 +126,9 @@ function GameManager.WaveSystem()
         
         print("🌊 WAVE " .. CurrentWave .. " START! (" .. waveConfig.HeroCount .. " heroes, " .. waveConfig.SpawnInterval .. "s interval)")
         
-        -- Play wave start sound
+        -- Play wave start sound (quieter)
         local SoundSystem = require(script.Parent.SoundSystem)
-        SoundSystem.PlaySoundGlobal("WaveStart", 0.7, 1)
+        SoundSystem.PlaySoundGlobal("WaveStart", 0.3, 1)
         
         -- Notify clients
         for _, player in ipairs(Players:GetPlayers()) do
@@ -154,9 +154,9 @@ function GameManager.WaveSystem()
         if GameState == "WaveComplete" then
             print("✅ WAVE " .. CurrentWave .. " COMPLETE!")
             
-            -- Play victory sound
+            -- Play victory sound (quieter)
             local SoundSystem = require(script.Parent.SoundSystem)
-            SoundSystem.PlaySoundGlobal("WaveComplete", 0.8, 1)
+            SoundSystem.PlaySoundGlobal("WaveComplete", 0.4, 1)
             
             -- Give wave bonus to all players
             for _, player in ipairs(Players:GetPlayers()) do

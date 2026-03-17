@@ -129,8 +129,8 @@ function BearTrap:Trigger(hero)
     
     print("🪤 SNAP! Hero caught in bear trap!")
     
-    -- Play snap sound
-    SoundSystem.PlaySoundAtPosition("TrapSnap", self.position, 0.8, 1.2)
+    -- Play snap sound (quieter)
+    SoundSystem.PlaySoundAtPosition("TrapSnap", self.position, 0.3, 1.2)
     
     -- Snap animation (close jaws)
     local startLeft = self.leftJaw.Position

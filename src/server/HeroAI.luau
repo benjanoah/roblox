@@ -330,10 +330,10 @@ function HeroAI.SpawnHero(spawnPosition)
         humanoid.Died:Connect(function()
             print("💀 Hero died! Cleaning up...")
             
-            -- Play death sound
+            -- Play death sound (quieter)
             local heroPos = hero:FindFirstChild("HumanoidRootPart")
             if heroPos then
-                SoundSystem.PlaySoundAtPosition("HeroDeath", heroPos.Position, 0.6, 1)
+                SoundSystem.PlaySoundAtPosition("HeroDeath", heroPos.Position, 0.2, 1)
             end
             
             -- Give money to all players (in single player, just the one player)

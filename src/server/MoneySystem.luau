@@ -61,10 +61,10 @@ function MoneySystem.AddMoney(player, amount)
     MoneySystem.SetMoney(player, current + amount)
     print("💰 " .. player.Name .. " gained " .. amount .. " gold (total: " .. MoneySystem.GetMoney(player) .. ")")
     
-    -- Play money sound (only for the player who earned it)
+    -- Play money sound (only for the player who earned it, quieter)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         local pos = player.Character.HumanoidRootPart.Position
-        SoundSystem.PlaySoundAtPosition("MoneyEarned", pos, 0.5, 1.2)
+        SoundSystem.PlaySoundAtPosition("MoneyEarned", pos, 0.2, 1.2)
     end
 end
 

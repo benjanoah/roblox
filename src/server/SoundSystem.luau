@@ -30,7 +30,7 @@ end
     Play a sound at a specific position in the world
 ]]
 function SoundSystem.PlaySoundAtPosition(soundName, position, volume, pitch)
-    volume = volume or 1
+    volume = volume or 0.3 -- Lower default volume (background sounds)
     pitch = pitch or 1
     
     local soundId = SoundSystem.Sounds[soundName]
@@ -65,7 +65,7 @@ end
     Play a sound for all players (2D, not positional)
 ]]
 function SoundSystem.PlaySoundGlobal(soundName, volume, pitch)
-    volume = volume or 1
+    volume = volume or 0.3 -- Lower default volume (background sounds)
     pitch = pitch or 1
     
     local soundId = SoundSystem.Sounds[soundName]

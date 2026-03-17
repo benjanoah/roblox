@@ -102,12 +102,12 @@ local function MeleeAttack()
             heroHumanoid:TakeDamage(attackDamage)
             print("💥 Hit " .. closestHero.Name .. " for " .. attackDamage .. " damage! (Distance: " .. math.floor(closestDistance) .. " studs)")
             
-            -- Play hit sound
+            -- Play hit sound (quieter)
             local heroHRP = closestHero:FindFirstChild("HumanoidRootPart")
             if heroHRP then
                 local hitSound = Instance.new("Sound")
                 hitSound.SoundId = "rbxasset://sounds/hit.mp3"
-                hitSound.Volume = 0.5
+                hitSound.Volume = 0.2
                 hitSound.Parent = heroHRP
                 hitSound:Play()
                 game:GetService("Debris"):AddItem(hitSound, 1)
@@ -237,16 +237,17 @@ end)
 
 UpdateMoneyUI()
 
--- Prep time timer (big center screen)
+-- Prep time timer (top-right corner, smaller)
 local prepTimeLabel = Instance.new("TextLabel")
-prepTimeLabel.Size = UDim2.new(0, 400, 0, 100)
-prepTimeLabel.Position = UDim2.new(0.5, -200, 0.3, -50)
+prepTimeLabel.Size = UDim2.new(0, 250, 0, 60)
+prepTimeLabel.Position = UDim2.new(1, -260, 0, 10) -- Top-right
 prepTimeLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 prepTimeLabel.BackgroundTransparency = 0.3
 prepTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
-prepTimeLabel.TextSize = 48
+prepTimeLabel.TextSize = 28
 prepTimeLabel.Font = Enum.Font.GothamBold
-prepTimeLabel.Text = "Prep Time: 60"
+prepTimeLabel.Text = "⏱️ 60s"
+prepTimeLabel.TextXAlignment = Enum.TextXAlignment.Right
 prepTimeLabel.Visible = false
 prepTimeLabel.Parent = screenGui
 
@@ -268,7 +269,7 @@ local prepTimeEvent = ReplicatedStorage:WaitForChild("PrepTimeUpdate")
 prepTimeEvent.OnClientEvent:Connect(function(timeRemaining)
     if timeRemaining > 0 then
         prepTimeLabel.Visible = true
-        prepTimeLabel.Text = "⏱️ Initial Prep: " .. timeRemaining
+        prepTimeLabel.Text = "⏱️ Prep: " .. timeRemaining .. "s"
         
         -- Flash when almost over
         if timeRemaining <= 5 then
@@ -278,9 +279,6 @@ prepTimeEvent.OnClientEvent:Connect(function(timeRemaining)
         end
     else
         -- Hide prep timer when waves start
-        prepTimeLabel.Text = "🚨 WAVE 1 INCOMING!"
-        prepTimeLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-        task.wait(2)
         prepTimeLabel.Visible = false
     end
 end)
@@ -293,23 +291,27 @@ waveUpdateEvent.OnClientEvent:Connect(function(waveNumber, status, data)
         waveLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
         waveLabel.Visible = true
         
-        prepTimeLabel.Text = "🗡️ " .. data .. " Heroes Incoming!"
-        prepTimeLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
-        prepTimeLabel.Visible = true
-        task.wait(3)
-        prepTimeLabel.Visible = false
-        
     elseif status == "complete" then
-        prepTimeLabel.Text = "✅ WAVE " .. waveNumber .. " COMPLETE!\n+💰 " .. data .. " Gold Bonus"
-        prepTimeLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-        prepTimeLabel.TextSize = 36
-        prepTimeLabel.Visible = true
-        task.wait(3)
-        prepTimeLabel.TextSize = 48
+        -- Brief center message (smaller, quicker)
+        local completeLabel = Instance.new("TextLabel")
+        completeLabel.Size = UDim2.new(0, 400, 0, 80)
+        completeLabel.Position = UDim2.new(0.5, -200, 0.4, -40)
+        completeLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        completeLabel.BackgroundTransparency = 0.3
+        completeLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        completeLabel.TextSize = 32
+        completeLabel.Font = Enum.Font.GothamBold
+        completeLabel.Text = "✅ WAVE COMPLETE!\n💰 +" .. data .. " Gold"
+        completeLabel.Parent = screenGui
+        
+        task.delay(2, function()
+            completeLabel:Destroy()
+        end)
         
     elseif status == "prep" then
-        prepTimeLabel.Text = "⏱️ Next Wave: " .. data .. "s"
+        prepTimeLabel.Text = "⏱️ Next: " .. data .. "s"
         prepTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+        prepTimeLabel.TextSize = 28
         prepTimeLabel.Visible = true
     end
 end)
