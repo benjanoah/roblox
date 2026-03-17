@@ -210,12 +210,25 @@ prepTimeLabel.Text = "Prep Time: 60"
 prepTimeLabel.Visible = false
 prepTimeLabel.Parent = screenGui
 
+-- Wave label (top center)
+local waveLabel = Instance.new("TextLabel")
+waveLabel.Size = UDim2.new(0, 300, 0, 60)
+waveLabel.Position = UDim2.new(0.5, -150, 0, 10)
+waveLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+waveLabel.BackgroundTransparency = 0.3
+waveLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+waveLabel.TextSize = 36
+waveLabel.Font = Enum.Font.GothamBold
+waveLabel.Text = "🌊 Wave 1"
+waveLabel.Visible = false
+waveLabel.Parent = screenGui
+
 -- Listen for prep time updates
 local prepTimeEvent = ReplicatedStorage:WaitForChild("PrepTimeUpdate")
 prepTimeEvent.OnClientEvent:Connect(function(timeRemaining)
     if timeRemaining > 0 then
         prepTimeLabel.Visible = true
-        prepTimeLabel.Text = "⏱️ Prep Time: " .. timeRemaining
+        prepTimeLabel.Text = "⏱️ Initial Prep: " .. timeRemaining
         
         -- Flash when almost over
         if timeRemaining <= 5 then
@@ -224,11 +237,40 @@ prepTimeEvent.OnClientEvent:Connect(function(timeRemaining)
             prepTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
         end
     else
-        -- Hide prep timer when game starts
-        prepTimeLabel.Text = "🚨 HEROES INCOMING!"
+        -- Hide prep timer when waves start
+        prepTimeLabel.Text = "🚨 WAVE 1 INCOMING!"
         prepTimeLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
         task.wait(2)
         prepTimeLabel.Visible = false
+    end
+end)
+
+-- Listen for wave updates
+local waveUpdateEvent = ReplicatedStorage:WaitForChild("WaveUpdate")
+waveUpdateEvent.OnClientEvent:Connect(function(waveNumber, status, data)
+    if status == "start" then
+        waveLabel.Text = "🌊 Wave " .. waveNumber
+        waveLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+        waveLabel.Visible = true
+        
+        prepTimeLabel.Text = "🗡️ " .. data .. " Heroes Incoming!"
+        prepTimeLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
+        prepTimeLabel.Visible = true
+        task.wait(3)
+        prepTimeLabel.Visible = false
+        
+    elseif status == "complete" then
+        prepTimeLabel.Text = "✅ WAVE " .. waveNumber .. " COMPLETE!\n+💰 " .. data .. " Gold Bonus"
+        prepTimeLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        prepTimeLabel.TextSize = 36
+        prepTimeLabel.Visible = true
+        task.wait(3)
+        prepTimeLabel.TextSize = 48
+        
+    elseif status == "prep" then
+        prepTimeLabel.Text = "⏱️ Next Wave: " .. data .. "s"
+        prepTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+        prepTimeLabel.Visible = true
     end
 end)
 

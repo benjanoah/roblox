@@ -334,6 +334,10 @@ function HeroAI.SpawnHero(spawnPosition)
                 MoneySystem.AddMoney(player, MoneySystem.HERO_KILL_REWARD)
             end
             
+            -- Notify GameManager (for wave tracking)
+            local GameManager = require(script.Parent.GameManager)
+            GameManager.OnHeroKilled()
+            
             -- Remove from active heroes IMMEDIATELY
             for i, data in ipairs(ActiveHeroes) do
                 if data == heroData then
