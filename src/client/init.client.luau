@@ -21,6 +21,14 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 local lastAttack = 0
 local attackCooldown = 1.0 -- seconds
 
+-- Trap placement
+local lastTrapPlacement = 0
+local trapPlacementCooldown = 2.0 -- seconds
+local placeTrapEvent = ReplicatedStorage:WaitForChild("PlaceTrap")
+
+-- Trap preview
+local trapPreview = nil
+
 --[[
     Melee attack (punch)
 ]]
@@ -79,6 +87,56 @@ local function MeleeAttack()
 end
 
 --[[
+    Place Bear Trap
+]]
+local function PlaceTrap()
+    local now = tick()
+    if now - lastTrapPlacement < trapPlacementCooldown then
+        local remaining = math.ceil(trapPlacementCooldown - (now - lastTrapPlacement))
+        print("⏳ Trap cooldown: " .. remaining .. "s")
+        return
+    end
+    
+    -- Get mouse target position
+    local targetPos = mouse.Hit.Position
+    
+    -- Place trap on ground level
+    local trapPosition = Vector3.new(targetPos.X, 0.5, targetPos.Z)
+    
+    -- Send to server
+    placeTrapEvent:FireServer(trapPosition)
+    
+    lastTrapPlacement = now
+    print("🪤 Trap placed at " .. tostring(trapPosition))
+end
+
+--[[
+    Update trap preview (green circle where trap will be placed)
+]]
+local function UpdateTrapPreview()
+    if not trapPreview then
+        trapPreview = Instance.new("Part")
+        trapPreview.Name = "TrapPreview"
+        trapPreview.Size = Vector3.new(4, 0.2, 4)
+        trapPreview.Transparency = 0.7
+        trapPreview.Color = Color3.fromRGB(0, 255, 0)
+        trapPreview.Material = Enum.Material.Neon
+        trapPreview.Anchored = true
+        trapPreview.CanCollide = false
+        trapPreview.Parent = workspace
+    end
+    
+    -- Update position to follow mouse
+    local targetPos = mouse.Hit.Position
+    trapPreview.Position = Vector3.new(targetPos.X, 0.6, targetPos.Z)
+end
+
+-- Update preview every frame
+game:GetService("RunService").Heartbeat:Connect(function()
+    UpdateTrapPreview()
+end)
+
+--[[
     Input handling
 ]]
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
@@ -92,6 +150,11 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     -- Keyboard shortcut (M1 alternative)
     if input.KeyCode == Enum.KeyCode.Space then
         MeleeAttack()
+    end
+    
+    -- T key = Place trap
+    if input.KeyCode == Enum.KeyCode.T then
+        PlaceTrap()
     end
 end)
 
@@ -119,3 +182,4 @@ healthLabel.Text = "❤️ HP: " .. humanoid.Health .. " / " .. humanoid.MaxHeal
 print("✅ Client initialized! Controls:")
 print("   🖱️ Left Click = Melee Attack")
 print("   ⌨️ Space = Melee Attack")
+print("   🪤 T = Place Bear Trap")
