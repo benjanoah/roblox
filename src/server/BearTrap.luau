@@ -153,23 +153,8 @@ function BearTrap:Trigger(hero)
     -- Trap hero (freeze in place)
     local heroHRP = hero:FindFirstChild("HumanoidRootPart")
     if heroHRP then
-        -- Store original velocity
-        local originalVelocity = heroHRP.AssemblyLinearVelocity
-        
         -- Anchor hero
         heroHRP.Anchored = true
-        
-        -- Visual effect (red glow)
-        local trapEffect = Instance.new("Part")
-        trapEffect.Shape = Enum.PartType.Ball
-        trapEffect.Size = Vector3.new(3, 3, 3)
-        trapEffect.Position = heroHRP.Position
-        trapEffect.Transparency = 0.7
-        trapEffect.Color = Color3.fromRGB(255, 0, 0)
-        trapEffect.Material = Enum.Material.Neon
-        trapEffect.Anchored = true
-        trapEffect.CanCollide = false
-        trapEffect.Parent = workspace
         
         -- Release after 3 seconds
         task.delay(3, function()
@@ -177,12 +162,7 @@ function BearTrap:Trigger(hero)
                 heroHRP.Anchored = false
                 print("✅ Hero released from trap")
             end
-            if trapEffect and trapEffect.Parent then
-                trapEffect:Destroy()
-            end
         end)
-        
-        Debris:AddItem(trapEffect, 3)
     end
     
     -- Remove trap after use

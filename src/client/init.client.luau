@@ -66,22 +66,6 @@ local function MeleeAttack()
         if heroHumanoid then
             heroHumanoid:TakeDamage(attackDamage)
             print("💥 Hit " .. closestHero.Name .. " for " .. attackDamage .. " damage! (Distance: " .. math.floor(closestDistance) .. " studs)")
-            
-            -- Visual feedback
-            local heroHRP = closestHero:FindFirstChild("HumanoidRootPart")
-            if heroHRP then
-                local hitEffect = Instance.new("Part")
-                hitEffect.Shape = Enum.PartType.Ball
-                hitEffect.Size = Vector3.new(2, 2, 2)
-                hitEffect.Position = heroHRP.Position
-                hitEffect.BrickColor = BrickColor.new("Bright red")
-                hitEffect.Material = Enum.Material.Neon
-                hitEffect.Anchored = true
-                hitEffect.CanCollide = false
-                hitEffect.Parent = workspace
-                
-                game:GetService("Debris"):AddItem(hitEffect, 0.3)
-            end
         end
     end
 end
