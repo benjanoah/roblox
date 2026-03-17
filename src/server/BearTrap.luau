@@ -7,6 +7,7 @@ local BearTrap = {}
 BearTrap.__index = BearTrap
 
 local Debris = game:GetService("Debris")
+local SoundSystem = require(script.Parent.SoundSystem)
 
 function BearTrap.new(position)
     local self = setmetatable({}, BearTrap)
@@ -127,6 +128,9 @@ function BearTrap:Trigger(hero)
     self.isTriggered = true
     
     print("🪤 SNAP! Hero caught in bear trap!")
+    
+    -- Play snap sound
+    SoundSystem.PlaySoundAtPosition("TrapSnap", self.position, 0.8, 1.2)
     
     -- Snap animation (close jaws)
     local startLeft = self.leftJaw.Position

@@ -12,6 +12,7 @@ local Players = game:GetService("Players")
 local GameConfig = require(ReplicatedStorage.Shared.GameConfig)
 local HeroAnimations = require(script.Parent.HeroAnimations)
 local MoneySystem = require(script.Parent.MoneySystem)
+local SoundSystem = require(script.Parent.SoundSystem)
 
 local ActiveHeroes = {}
 
@@ -328,6 +329,12 @@ function HeroAI.SpawnHero(spawnPosition)
     if humanoid then
         humanoid.Died:Connect(function()
             print("💀 Hero died! Cleaning up...")
+            
+            -- Play death sound
+            local heroPos = hero:FindFirstChild("HumanoidRootPart")
+            if heroPos then
+                SoundSystem.PlaySoundAtPosition("HeroDeath", heroPos.Position, 0.6, 1)
+            end
             
             -- Give money to all players (in single player, just the one player)
             for _, player in ipairs(Players:GetPlayers()) do

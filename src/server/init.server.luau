@@ -26,8 +26,10 @@ local CombatSystem = require(script.CombatSystem)
 local HeroAI = require(script.HeroAI)
 local TrapSystem = require(script.TrapSystem)
 local MoneySystem = require(script.MoneySystem)
+local SoundSystem = require(script.SoundSystem)
 
 -- Initialize game
+SoundSystem.Init()
 GameManager.Init()
 TrapSystem.Init()
 MoneySystem.Init()

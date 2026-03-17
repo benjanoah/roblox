@@ -7,6 +7,7 @@ local MoneySystem = {}
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
+local SoundSystem = require(script.Parent.SoundSystem)
 
 -- Player money storage
 local playerMoney = {}
@@ -59,6 +60,12 @@ function MoneySystem.AddMoney(player, amount)
     local current = MoneySystem.GetMoney(player)
     MoneySystem.SetMoney(player, current + amount)
     print("💰 " .. player.Name .. " gained " .. amount .. " gold (total: " .. MoneySystem.GetMoney(player) .. ")")
+    
+    -- Play money sound (only for the player who earned it)
+    if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local pos = player.Character.HumanoidRootPart.Position
+        SoundSystem.PlaySoundAtPosition("MoneyEarned", pos, 0.5, 1.2)
+    end
 end
 
 function MoneySystem.RemoveMoney(player, amount)

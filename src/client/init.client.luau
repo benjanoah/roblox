@@ -35,6 +35,35 @@ trapFeedbackEvent.OnClientEvent:Connect(function(message)
     print("⚠️ " .. message)
 end)
 
+-- Sound IDs (same as server)
+local Sounds = {
+    TrapSnap = "rbxasset://sounds/metal_hit.mp3",
+    HeroDeath = "rbxasset://sounds/uuhhh.mp3",
+    MeleeHit = "rbxasset://sounds/hit.mp3",
+    MoneyEarned = "rbxasset://sounds/electronicpingshort.wav",
+    WaveComplete = "rbxasset://sounds/victory.mp3",
+    WaveStart = "rbxasset://sounds/action_get_up.mp3",
+}
+
+-- Listen for global sound events
+local playSoundEvent = ReplicatedStorage:WaitForChild("PlaySound")
+playSoundEvent.OnClientEvent:Connect(function(soundName, volume, pitch)
+    volume = volume or 1
+    pitch = pitch or 1
+    
+    local soundId = Sounds[soundName]
+    if soundId then
+        local sound = Instance.new("Sound")
+        sound.SoundId = soundId
+        sound.Volume = volume
+        sound.PlaybackSpeed = pitch
+        sound.Parent = game.SoundService
+        sound:Play()
+        
+        game:GetService("Debris"):AddItem(sound, 5)
+    end
+end)
+
 --[[
     Melee attack (punch)
 ]]
@@ -72,6 +101,17 @@ local function MeleeAttack()
         if heroHumanoid then
             heroHumanoid:TakeDamage(attackDamage)
             print("💥 Hit " .. closestHero.Name .. " for " .. attackDamage .. " damage! (Distance: " .. math.floor(closestDistance) .. " studs)")
+            
+            -- Play hit sound
+            local heroHRP = closestHero:FindFirstChild("HumanoidRootPart")
+            if heroHRP then
+                local hitSound = Instance.new("Sound")
+                hitSound.SoundId = "rbxasset://sounds/hit.mp3"
+                hitSound.Volume = 0.5
+                hitSound.Parent = heroHRP
+                hitSound:Play()
+                game:GetService("Debris"):AddItem(hitSound, 1)
+            end
         end
     end
 end
