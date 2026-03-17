@@ -11,6 +11,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local GameConfig = require(ReplicatedStorage.Shared.GameConfig)
 local HeroAnimations = require(script.Parent.HeroAnimations)
+local MoneySystem = require(script.Parent.MoneySystem)
 
 local ActiveHeroes = {}
 
@@ -327,6 +328,12 @@ function HeroAI.SpawnHero(spawnPosition)
     if humanoid then
         humanoid.Died:Connect(function()
             print("💀 Hero died! Cleaning up...")
+            
+            -- Give money to all players (in single player, just the one player)
+            for _, player in ipairs(Players:GetPlayers()) do
+                MoneySystem.AddMoney(player, MoneySystem.HERO_KILL_REWARD)
+            end
+            
             -- Remove from active heroes IMMEDIATELY
             for i, data in ipairs(ActiveHeroes) do
                 if data == heroData then

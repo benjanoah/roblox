@@ -25,9 +25,15 @@ local attackCooldown = 1.0 -- seconds
 local lastTrapPlacement = 0
 local trapPlacementCooldown = 2.0 -- seconds
 local placeTrapEvent = ReplicatedStorage:WaitForChild("PlaceTrap")
+local trapFeedbackEvent = ReplicatedStorage:WaitForChild("TrapFeedback")
 
 -- Trap preview
 local trapPreview = nil
+
+-- Listen for trap placement feedback
+trapFeedbackEvent.OnClientEvent:Connect(function(message)
+    print("⚠️ " .. message)
+end)
 
 --[[
     Melee attack (punch)
@@ -156,12 +162,40 @@ healthLabel.TextScaled = true
 healthLabel.Font = Enum.Font.GothamBold
 healthLabel.Parent = screenGui
 
+-- Money label
+local moneyLabel = Instance.new("TextLabel")
+moneyLabel.Size = UDim2.new(0, 200, 0, 50)
+moneyLabel.Position = UDim2.new(0, 10, 0, 70)
+moneyLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+moneyLabel.BackgroundTransparency = 0.5
+moneyLabel.TextColor3 = Color3.fromRGB(255, 215, 0) -- Gold color
+moneyLabel.TextScaled = true
+moneyLabel.Font = Enum.Font.GothamBold
+moneyLabel.Parent = screenGui
+
+-- Current money
+local currentMoney = 0
+
 -- Update health UI
 humanoid.HealthChanged:Connect(function(health)
     healthLabel.Text = "❤️ HP: " .. math.floor(health) .. " / " .. humanoid.MaxHealth
 end)
 
 healthLabel.Text = "❤️ HP: " .. humanoid.Health .. " / " .. humanoid.MaxHealth
+
+-- Update money UI
+local function UpdateMoneyUI()
+    moneyLabel.Text = "💰 Gold: " .. currentMoney
+end
+
+-- Listen for money updates from server
+local moneyUpdateEvent = ReplicatedStorage:WaitForChild("MoneyUpdate")
+moneyUpdateEvent.OnClientEvent:Connect(function(newAmount)
+    currentMoney = newAmount
+    UpdateMoneyUI()
+end)
+
+UpdateMoneyUI()
 
 print("✅ Client initialized! Controls:")
 print("   🖱️ Left Click = Melee Attack")

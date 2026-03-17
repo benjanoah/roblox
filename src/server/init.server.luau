@@ -25,9 +25,11 @@ local GameManager = require(script.GameManager)
 local CombatSystem = require(script.CombatSystem)
 local HeroAI = require(script.HeroAI)
 local TrapSystem = require(script.TrapSystem)
+local MoneySystem = require(script.MoneySystem)
 
 -- Initialize game
 GameManager.Init()
 TrapSystem.Init()
+MoneySystem.Init()
 
 print("✅ Server initialized successfully!")
