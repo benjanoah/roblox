@@ -10,6 +10,15 @@ local RunService = game:GetService("RunService")
 
 local ActiveMinions = {}
 
+-- Random minion names
+local MinionNames = {
+    "Bob", "John", "Steve", "Dave", "Mike",
+    "Jeff", "Carl", "Rick", "Frank", "Tom",
+    "Gary", "Barry", "Larry", "Terry", "Jerry",
+    "Kevin", "Brian", "Chad", "Brad", "Dan",
+    "Stan", "Ron", "Don", "Ben", "Ken"
+}
+
 -- Minion stats
 MinionAI.HEALTH = 50
 MinionAI.DAMAGE = 15
@@ -22,8 +31,11 @@ MinionAI.WALK_SPEED = 14
     Create a minion body
 ]]
 local function CreateMinionBody(position)
+    -- Pick random name
+    local randomName = MinionNames[math.random(1, #MinionNames)]
+    
     local minion = Instance.new("Model")
-    minion.Name = "Minion"
+    minion.Name = randomName
     
     -- HumanoidRootPart
     local hrp = Instance.new("Part")
@@ -82,9 +94,28 @@ local function CreateMinionBody(position)
     humanoid.MaxHealth = MinionAI.HEALTH
     humanoid.Health = MinionAI.HEALTH
     humanoid.WalkSpeed = MinionAI.WALK_SPEED
+    humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None -- Hide health bar
     humanoid.Parent = minion
     
     minion.Parent = workspace
+    
+    -- Name tag (BillboardGui)
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "NameTag"
+    billboard.Size = UDim2.new(0, 100, 0, 40)
+    billboard.StudsOffset = Vector3.new(0, 2, 0)
+    billboard.AlwaysOnTop = true
+    billboard.Parent = head
+    
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Size = UDim2.new(1, 0, 1, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameLabel.TextStrokeTransparency = 0.5
+    nameLabel.TextScaled = true
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.Text = randomName .. " 👹"
+    nameLabel.Parent = billboard
     
     return minion
 end
@@ -119,12 +150,12 @@ function MinionAI.SpawnMinion(player)
     local humanoid = minion:FindFirstChildOfClass("Humanoid")
     if humanoid then
         humanoid.Died:Connect(function()
-            print("💀 Minion died!")
+            print("💀 " .. minion.Name .. " died!")
             MinionAI.RemoveMinion(minionData)
         end)
     end
     
-    print("👹 Minion spawned for " .. player.Name .. "! Total minions: " .. #ActiveMinions)
+    print("👹 " .. minion.Name .. " spawned for " .. player.Name .. "! Total minions: " .. #ActiveMinions)
     
     return minion
 end
@@ -169,7 +200,7 @@ function MinionAI.StartAI(minionData)
                     local heroHumanoid = nearestHero:FindFirstChildOfClass("Humanoid")
                     if heroHumanoid then
                         heroHumanoid:TakeDamage(MinionAI.DAMAGE)
-                        print("👹💥 Minion attacked hero for " .. MinionAI.DAMAGE .. " damage!")
+                        print("👹💥 " .. minion.Name .. " attacked hero for " .. MinionAI.DAMAGE .. " damage!")
                         minionData.lastAttackTime = now
                     end
                 end
