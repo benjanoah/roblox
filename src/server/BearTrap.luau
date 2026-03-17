@@ -102,21 +102,36 @@ function BearTrap:CreateModel(position)
 end
 
 function BearTrap:StartTriggerCheck()
+    print("🔍 Trap trigger check started at " .. tostring(self.position))
+    
     self.checkLoop = task.spawn(function()
         while self.isActive and not self.isTriggered do
             task.wait(0.1) -- Check every 0.1 seconds
             
             -- Find heroes near trap
+            local heroCount = 0
             for _, obj in ipairs(workspace:GetChildren()) do
                 if obj.Name == "Hero" and obj:FindFirstChild("HumanoidRootPart") then
+                    heroCount = heroCount + 1
                     local heroHRP = obj.HumanoidRootPart
                     local distance = (self.position - heroHRP.Position).Magnitude
                     
+                    -- Debug: print distance if hero is nearby
+                    if distance <= 10 then
+                        print("🎯 Hero distance from trap: " .. math.floor(distance) .. " studs (trigger at " .. self.trapRadius .. ")")
+                    end
+                    
                     if distance <= self.trapRadius then
+                        print("💥 TRIGGER! Hero at " .. math.floor(distance) .. " studs")
                         self:Trigger(obj)
                         break
                     end
                 end
+            end
+            
+            -- Debug every 5 seconds
+            if tick() % 5 < 0.1 then
+                print("🪤 Trap active, checking... (" .. heroCount .. " heroes in game)")
             end
         end
     end)
