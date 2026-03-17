@@ -18,9 +18,6 @@ function BearTrap.new(position)
     -- Create trap model
     self:CreateModel(position)
     
-    -- DEBUG: Visual trigger zone
-    self:CreateDebugSphere()
-    
     -- Start checking for heroes
     self:StartTriggerCheck()
     
@@ -104,56 +101,22 @@ function BearTrap:CreateModel(position)
     self.position = position
 end
 
-function BearTrap:CreateDebugSphere()
-    -- Red transparent sphere showing trigger zone
-    local debugSphere = Instance.new("Part")
-    debugSphere.Name = "TriggerZone"
-    debugSphere.Shape = Enum.PartType.Ball
-    debugSphere.Size = Vector3.new(self.trapRadius * 2, self.trapRadius * 2, self.trapRadius * 2)
-    debugSphere.Position = self.position + Vector3.new(0, self.trapRadius, 0)
-    debugSphere.Transparency = 0.8
-    debugSphere.Color = Color3.fromRGB(255, 0, 0)
-    debugSphere.Material = Enum.Material.Neon
-    debugSphere.Anchored = true
-    debugSphere.CanCollide = false
-    debugSphere.Parent = workspace
-    
-    self.debugSphere = debugSphere
-    
-    print("🔴 Debug sphere created at " .. tostring(self.position) .. " with radius " .. self.trapRadius)
-end
-
 function BearTrap:StartTriggerCheck()
-    print("🔍 Trap trigger check started at " .. tostring(self.position))
-    
     self.checkLoop = task.spawn(function()
         while self.isActive and not self.isTriggered do
             task.wait(0.1) -- Check every 0.1 seconds
             
             -- Find heroes near trap
-            local heroCount = 0
             for _, obj in ipairs(workspace:GetChildren()) do
                 if obj.Name == "Hero" and obj:FindFirstChild("HumanoidRootPart") then
-                    heroCount = heroCount + 1
                     local heroHRP = obj.HumanoidRootPart
                     local distance = (self.position - heroHRP.Position).Magnitude
                     
-                    -- Debug: print distance if hero is nearby
-                    if distance <= 10 then
-                        print("🎯 Hero distance from trap: " .. math.floor(distance) .. " studs (trigger at " .. self.trapRadius .. ")")
-                    end
-                    
                     if distance <= self.trapRadius then
-                        print("💥 TRIGGER! Hero at " .. math.floor(distance) .. " studs")
                         self:Trigger(obj)
                         break
                     end
                 end
-            end
-            
-            -- Debug every 5 seconds
-            if tick() % 5 < 0.1 then
-                print("🪤 Trap active, checking... (" .. heroCount .. " heroes in game)")
             end
         end
     end)
@@ -234,7 +197,6 @@ function BearTrap:Destroy()
     if self.base then self.base:Destroy() end
     if self.leftJaw then self.leftJaw:Destroy() end
     if self.rightJaw then self.rightJaw:Destroy() end
-    if self.debugSphere then self.debugSphere:Destroy() end
     
     print("🗑️ Bear trap removed")
 end
