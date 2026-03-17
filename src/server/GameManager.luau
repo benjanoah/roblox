@@ -12,7 +12,8 @@ local GameConfig = require(ReplicatedStorage.Shared.GameConfig)
 local HeroAI = require(script.Parent.HeroAI)
 local CombatSystem = require(script.Parent.CombatSystem)
 
-local GameState = "Waiting" -- Waiting, Active, Ended
+local GameState = "Waiting" -- Waiting, PrepTime, Active, Ended
+local PrepTimeRemaining = 60 -- 60 seconds prep time
 
 --[[
     Start the game
@@ -20,19 +21,56 @@ local GameState = "Waiting" -- Waiting, Active, Ended
 function GameManager.StartGame()
     print("🎮 Starting Dungeon Boss Simulator!")
     
-    GameState = "Active"
+    GameState = "PrepTime"
+    PrepTimeRemaining = 60
     
     -- Initialize player as zombie
     GameManager.SetupPlayer()
     
-    -- Start hero spawning
-    task.spawn(function()
-        GameManager.HeroSpawnLoop()
-    end)
+    -- Create PrepTime RemoteEvent
+    local prepTimeEvent = ReplicatedStorage:FindFirstChild("PrepTimeUpdate")
+    if not prepTimeEvent then
+        prepTimeEvent = Instance.new("RemoteEvent")
+        prepTimeEvent.Name = "PrepTimeUpdate"
+        prepTimeEvent.Parent = ReplicatedStorage
+    end
     
-    -- Start game timer
+    -- Prep time countdown
     task.spawn(function()
-        GameManager.GameTimer()
+        while PrepTimeRemaining > 0 and GameState == "PrepTime" do
+            -- Send to all clients
+            for _, player in ipairs(Players:GetPlayers()) do
+                prepTimeEvent:FireClient(player, PrepTimeRemaining)
+            end
+            
+            if PrepTimeRemaining % 10 == 0 or PrepTimeRemaining <= 5 then
+                print("⏱️ Prep time: " .. PrepTimeRemaining .. " seconds")
+            end
+            
+            task.wait(1)
+            PrepTimeRemaining -= 1
+        end
+        
+        -- Prep time over, start main game
+        if GameState == "PrepTime" then
+            print("🚨 Prep time over! Heroes incoming!")
+            GameState = "Active"
+            
+            -- Notify clients
+            for _, player in ipairs(Players:GetPlayers()) do
+                prepTimeEvent:FireClient(player, 0)
+            end
+            
+            -- Start hero spawning
+            task.spawn(function()
+                GameManager.HeroSpawnLoop()
+            end)
+            
+            -- Start game timer
+            task.spawn(function()
+                GameManager.GameTimer()
+            end)
+        end
     end)
 end
 
@@ -58,9 +96,14 @@ function GameManager.SetupPlayer()
 end
 
 --[[
-    Hero spawn loop
+    Hero spawn loop (only during Active state)
 ]]
 function GameManager.HeroSpawnLoop()
+    -- Wait for Active state (after prep time)
+    while GameState ~= "Active" do
+        task.wait(0.5)
+    end
+    
     while GameState == "Active" do
         local heroSpawn = workspace:FindFirstChild("HeroSpawn")
         

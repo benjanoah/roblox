@@ -197,6 +197,41 @@ end)
 
 UpdateMoneyUI()
 
+-- Prep time timer (big center screen)
+local prepTimeLabel = Instance.new("TextLabel")
+prepTimeLabel.Size = UDim2.new(0, 400, 0, 100)
+prepTimeLabel.Position = UDim2.new(0.5, -200, 0.3, -50)
+prepTimeLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+prepTimeLabel.BackgroundTransparency = 0.3
+prepTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+prepTimeLabel.TextSize = 48
+prepTimeLabel.Font = Enum.Font.GothamBold
+prepTimeLabel.Text = "Prep Time: 60"
+prepTimeLabel.Visible = false
+prepTimeLabel.Parent = screenGui
+
+-- Listen for prep time updates
+local prepTimeEvent = ReplicatedStorage:WaitForChild("PrepTimeUpdate")
+prepTimeEvent.OnClientEvent:Connect(function(timeRemaining)
+    if timeRemaining > 0 then
+        prepTimeLabel.Visible = true
+        prepTimeLabel.Text = "⏱️ Prep Time: " .. timeRemaining
+        
+        -- Flash when almost over
+        if timeRemaining <= 5 then
+            prepTimeLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+        else
+            prepTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+        end
+    else
+        -- Hide prep timer when game starts
+        prepTimeLabel.Text = "🚨 HEROES INCOMING!"
+        prepTimeLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+        task.wait(2)
+        prepTimeLabel.Visible = false
+    end
+end)
+
 print("✅ Client initialized! Controls:")
 print("   🖱️ Left Click = Melee Attack")
 print("   ⌨️ Space = Melee Attack")
