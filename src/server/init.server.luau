@@ -27,11 +27,13 @@ local HeroAI = require(script.HeroAI)
 local TrapSystem = require(script.TrapSystem)
 local MoneySystem = require(script.MoneySystem)
 local SoundSystem = require(script.SoundSystem)
+local MinionSystem = require(script.MinionSystem)
 
 -- Initialize game
 SoundSystem.Init()
 GameManager.Init()
 TrapSystem.Init()
 MoneySystem.Init()
+MinionSystem.Init()
 
 print("✅ Server initialized successfully!")

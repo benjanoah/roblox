@@ -35,6 +35,17 @@ trapFeedbackEvent.OnClientEvent:Connect(function(message)
     print("⚠️ " .. message)
 end)
 
+-- Minion spawning
+local lastMinionSpawn = 0
+local minionSpawnCooldown = 1.0 -- seconds
+local spawnMinionEvent = ReplicatedStorage:WaitForChild("SpawnMinion")
+local minionFeedbackEvent = ReplicatedStorage:WaitForChild("MinionFeedback")
+
+-- Listen for minion feedback
+minionFeedbackEvent.OnClientEvent:Connect(function(message)
+    print("⚠️ " .. message)
+end)
+
 -- Sound IDs (same as server)
 local Sounds = {
     TrapSnap = "rbxasset://sounds/metal_hit.mp3",
@@ -130,6 +141,24 @@ local function PlaceTrap()
 end
 
 --[[
+    Spawn Minion
+]]
+local function SpawnMinion()
+    local now = tick()
+    if now - lastMinionSpawn < minionSpawnCooldown then
+        local remaining = math.ceil(minionSpawnCooldown - (now - lastMinionSpawn))
+        print("⏳ Minion cooldown: " .. remaining .. "s")
+        return
+    end
+    
+    -- Send to server
+    spawnMinionEvent:FireServer()
+    
+    lastMinionSpawn = now
+    print("👹 Spawning minion...")
+end
+
+--[[
     Update trap preview (green circle where trap will be placed)
 ]]
 local function UpdateTrapPreview()
@@ -174,6 +203,11 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     -- T key = Place trap
     if input.KeyCode == Enum.KeyCode.T then
         PlaceTrap()
+    end
+    
+    -- M key = Spawn minion
+    if input.KeyCode == Enum.KeyCode.M then
+        SpawnMinion()
     end
 end)
 
@@ -308,4 +342,5 @@ end)
 print("✅ Client initialized! Controls:")
 print("   🖱️ Left Click = Melee Attack")
 print("   ⌨️ Space = Melee Attack")
-print("   🪤 T = Place Bear Trap")
+print("   🪤 T = Place Bear Trap (5 gold)")
+print("   👹 M = Spawn Minion (20 gold)")
