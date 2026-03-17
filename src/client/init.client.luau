@@ -101,17 +101,6 @@ local function MeleeAttack()
         if heroHumanoid then
             heroHumanoid:TakeDamage(attackDamage)
             print("💥 Hit " .. closestHero.Name .. " for " .. attackDamage .. " damage! (Distance: " .. math.floor(closestDistance) .. " studs)")
-            
-            -- Play hit sound (quieter)
-            local heroHRP = closestHero:FindFirstChild("HumanoidRootPart")
-            if heroHRP then
-                local hitSound = Instance.new("Sound")
-                hitSound.SoundId = "rbxasset://sounds/hit.mp3"
-                hitSound.Volume = 0.2
-                hitSound.Parent = heroHRP
-                hitSound:Play()
-                game:GetService("Debris"):AddItem(hitSound, 1)
-            end
         end
     end
 end
