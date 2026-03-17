@@ -287,6 +287,58 @@ waveLabel.Text = "🌊 Wave 1"
 waveLabel.Visible = false
 waveLabel.Parent = screenGui
 
+-- Controls panel (right side)
+local controlsFrame = Instance.new("Frame")
+controlsFrame.Name = "ControlsPanel"
+controlsFrame.Size = UDim2.new(0, 150, 0, 200)
+controlsFrame.Position = UDim2.new(1, -160, 0.5, -100)
+controlsFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+controlsFrame.BackgroundTransparency = 0.5
+controlsFrame.BorderSizePixel = 0
+controlsFrame.Parent = screenGui
+
+local controlsTitle = Instance.new("TextLabel")
+controlsTitle.Size = UDim2.new(1, 0, 0, 30)
+controlsTitle.Position = UDim2.new(0, 0, 0, 5)
+controlsTitle.BackgroundTransparency = 1
+controlsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+controlsTitle.TextSize = 18
+controlsTitle.Font = Enum.Font.GothamBold
+controlsTitle.Text = "⚡ Controls"
+controlsTitle.Parent = controlsFrame
+
+-- Trap button
+local trapButton = Instance.new("TextButton")
+trapButton.Name = "TrapButton"
+trapButton.Size = UDim2.new(0, 130, 0, 60)
+trapButton.Position = UDim2.new(0, 10, 0, 40)
+trapButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+trapButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+trapButton.TextSize = 16
+trapButton.Font = Enum.Font.GothamBold
+trapButton.Text = "🪤 [T] Trap\n💰 5 Gold"
+trapButton.Parent = controlsFrame
+
+trapButton.MouseButton1Click:Connect(function()
+    PlaceTrap()
+end)
+
+-- Minion button
+local minionButton = Instance.new("TextButton")
+minionButton.Name = "MinionButton"
+minionButton.Size = UDim2.new(0, 130, 0, 60)
+minionButton.Position = UDim2.new(0, 10, 0, 110)
+minionButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+minionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minionButton.TextSize = 16
+minionButton.Font = Enum.Font.GothamBold
+minionButton.Text = "👹 [M] Minion\n💰 20 Gold"
+minionButton.Parent = controlsFrame
+
+minionButton.MouseButton1Click:Connect(function()
+    SpawnMinion()
+end)
+
 -- Listen for prep time updates
 local prepTimeEvent = ReplicatedStorage:WaitForChild("PrepTimeUpdate")
 prepTimeEvent.OnClientEvent:Connect(function(timeRemaining)
