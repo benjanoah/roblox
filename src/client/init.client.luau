@@ -25,7 +25,6 @@ local attackCooldown = 1.0 -- seconds
 
 -- Player stats (updated from shop)
 local playerDamage = 25
-local playerDamageEvent = ReplicatedStorage:WaitForChild("PlayerDamageUpdate")
 
 -- Trap placement
 local lastTrapPlacement = 0
@@ -50,12 +49,6 @@ local minionFeedbackEvent = ReplicatedStorage:WaitForChild("MinionFeedback")
 -- Listen for minion feedback
 minionFeedbackEvent.OnClientEvent:Connect(function(message)
     print("⚠️ " .. message)
-end)
-
--- Listen for player damage updates from shop
-playerDamageEvent.OnClientEvent:Connect(function(newDamage)
-    playerDamage = newDamage
-    print("💪 Damage upgraded to " .. newDamage .. "!")
 end)
 
 -- Sound IDs (same as server)
@@ -405,6 +398,17 @@ waveUpdateEvent.OnClientEvent:Connect(function(waveNumber, status, data)
         prepTimeLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
         prepTimeLabel.TextSize = 28
         prepTimeLabel.Visible = true
+    end
+end)
+
+-- Listen for player damage updates from shop
+task.spawn(function()
+    local playerDamageEvent = ReplicatedStorage:WaitForChild("PlayerDamageUpdate", 10)
+    if playerDamageEvent then
+        playerDamageEvent.OnClientEvent:Connect(function(newDamage)
+            playerDamage = newDamage
+            print("💪 Damage upgraded to " .. newDamage .. "!")
+        end)
     end
 end)
 
