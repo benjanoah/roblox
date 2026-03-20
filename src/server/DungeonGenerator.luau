@@ -272,6 +272,7 @@ local function BuildDungeon()
     end
     
     -- Place Treasure in center of first room (player spawn)
+    -- Put in workspace root so HeroAI can find it!
     if #rooms > 0 then
         local room = rooms[1]
         local treasure = Instance.new("Part")
@@ -285,12 +286,13 @@ local function BuildDungeon()
         treasure.Anchored = true
         treasure.Color = Color3.fromRGB(255, 215, 0) -- Gold
         treasure.Material = Enum.Material.Neon
-        treasure.Parent = dungeon
+        treasure.Parent = workspace -- In workspace root for HeroAI!
         
         print("💎 Treasure placed in center room")
     end
     
     -- Place Exit in a random far room
+    -- Put in workspace root so HeroAI can find it!
     if #rooms >= 3 then
         local exitRoom = rooms[#rooms] -- Last room (furthest)
         local exit = Instance.new("Part")
@@ -305,7 +307,7 @@ local function BuildDungeon()
         exit.Color = Color3.fromRGB(0, 255, 0) -- Green
         exit.Material = Enum.Material.Neon
         exit.Transparency = 0.5
-        exit.Parent = dungeon
+        exit.Parent = workspace -- In workspace root for HeroAI!
         
         print("🚪 Exit placed in far room")
     end
