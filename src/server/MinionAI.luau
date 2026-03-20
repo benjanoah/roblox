@@ -107,7 +107,7 @@ local function CreateMinionBody(position, health, damage)
     rightEyeWeld.C0 = CFrame.new(0.2, 0.1, -0.41)
     rightEyeWeld.Parent = rightEye
     
-    -- Left Arm
+    -- Left Arm (with Motor6D for animation)
     local leftArm = Instance.new("Part")
     leftArm.Name = "Left Arm"
     leftArm.Size = Vector3.new(0.4, 1, 0.4)
@@ -115,13 +115,15 @@ local function CreateMinionBody(position, health, damage)
     leftArm.BrickColor = color
     leftArm.Parent = minion
     
-    local leftArmWeld = Instance.new("Weld")
-    leftArmWeld.Part0 = torso
-    leftArmWeld.Part1 = leftArm
-    leftArmWeld.C0 = CFrame.new(-0.7, 0, 0)
-    leftArmWeld.Parent = leftArm
+    local leftShoulder = Instance.new("Motor6D")
+    leftShoulder.Name = "Left Shoulder"
+    leftShoulder.Part0 = torso
+    leftShoulder.Part1 = leftArm
+    leftShoulder.C0 = CFrame.new(-0.5, 0.4, 0) -- Shoulder position
+    leftShoulder.C1 = CFrame.new(0, 0.5, 0) -- Arm attachment
+    leftShoulder.Parent = torso
     
-    -- Right Arm
+    -- Right Arm (with Motor6D for animation)
     local rightArm = Instance.new("Part")
     rightArm.Name = "Right Arm"
     rightArm.Size = Vector3.new(0.4, 1, 0.4)
@@ -129,13 +131,15 @@ local function CreateMinionBody(position, health, damage)
     rightArm.BrickColor = color
     rightArm.Parent = minion
     
-    local rightArmWeld = Instance.new("Weld")
-    rightArmWeld.Part0 = torso
-    rightArmWeld.Part1 = rightArm
-    rightArmWeld.C0 = CFrame.new(0.7, 0, 0)
-    rightArmWeld.Parent = rightArm
+    local rightShoulder = Instance.new("Motor6D")
+    rightShoulder.Name = "Right Shoulder"
+    rightShoulder.Part0 = torso
+    rightShoulder.Part1 = rightArm
+    rightShoulder.C0 = CFrame.new(0.5, 0.4, 0) -- Shoulder position
+    rightShoulder.C1 = CFrame.new(0, 0.5, 0) -- Arm attachment
+    rightShoulder.Parent = torso
     
-    -- Left Leg
+    -- Left Leg (with Motor6D for animation)
     local leftLeg = Instance.new("Part")
     leftLeg.Name = "Left Leg"
     leftLeg.Size = Vector3.new(0.4, 1, 0.4)
@@ -143,13 +147,15 @@ local function CreateMinionBody(position, health, damage)
     leftLeg.BrickColor = color
     leftLeg.Parent = minion
     
-    local leftLegWeld = Instance.new("Weld")
-    leftLegWeld.Part0 = torso
-    leftLegWeld.Part1 = leftLeg
-    leftLegWeld.C0 = CFrame.new(-0.3, -1, 0)
-    leftLegWeld.Parent = leftLeg
+    local leftHip = Instance.new("Motor6D")
+    leftHip.Name = "Left Hip"
+    leftHip.Part0 = torso
+    leftHip.Part1 = leftLeg
+    leftHip.C0 = CFrame.new(-0.3, -0.5, 0) -- Hip joint position
+    leftHip.C1 = CFrame.new(0, 0.5, 0) -- Leg attachment
+    leftHip.Parent = torso
     
-    -- Right Leg
+    -- Right Leg (with Motor6D for animation)
     local rightLeg = Instance.new("Part")
     rightLeg.Name = "Right Leg"
     rightLeg.Size = Vector3.new(0.4, 1, 0.4)
@@ -157,11 +163,13 @@ local function CreateMinionBody(position, health, damage)
     rightLeg.BrickColor = color
     rightLeg.Parent = minion
     
-    local rightLegWeld = Instance.new("Weld")
-    rightLegWeld.Part0 = torso
-    rightLegWeld.Part1 = rightLeg
-    rightLegWeld.C0 = CFrame.new(0.3, -1, 0)
-    rightLegWeld.Parent = rightLeg
+    local rightHip = Instance.new("Motor6D")
+    rightHip.Name = "Right Hip"
+    rightHip.Part0 = torso
+    rightHip.Part1 = rightLeg
+    rightHip.C0 = CFrame.new(0.3, -0.5, 0) -- Hip joint position
+    rightHip.C1 = CFrame.new(0, 0.5, 0) -- Leg attachment
+    rightHip.Parent = torso
     
     -- Humanoid
     local humanoid = Instance.new("Humanoid")
@@ -241,6 +249,62 @@ end
     Start minion AI loop
 ]]
 function MinionAI.StartAI(minionData)
+    -- Animation variables
+    local animTime = 0
+    local lastVelocity = Vector3.zero
+    
+    -- Start animation loop (smooth walking)
+    minionData.animLoop = RunService.Heartbeat:Connect(function(dt)
+        local minion = minionData.model
+        if not minion or not minion.Parent then
+            return
+        end
+        
+        local hrp = minion:FindFirstChild("HumanoidRootPart")
+        local torso = minion:FindFirstChild("Torso")
+        if not hrp or not torso then return end
+        
+        -- Get motor6D joints
+        local leftHip = torso:FindFirstChild("Left Hip")
+        local rightHip = torso:FindFirstChild("Right Hip")
+        local leftShoulder = torso:FindFirstChild("Left Shoulder")
+        local rightShoulder = torso:FindFirstChild("Right Shoulder")
+        
+        if not leftHip or not rightHip or not leftShoulder or not rightShoulder then
+            return
+        end
+        
+        -- Detect movement (using velocity)
+        local velocity = hrp.AssemblyLinearVelocity
+        local speed = Vector3.new(velocity.X, 0, velocity.Z).Magnitude
+        local isMoving = speed > 0.5
+        
+        if isMoving then
+            -- Animate walking
+            animTime = animTime + dt * 8 -- Animation speed
+            
+            local swing = math.sin(animTime) * 0.5 -- Leg/arm swing amount (radians)
+            
+            -- Animate legs (opposite swing)
+            leftHip.C0 = CFrame.new(-0.3, -0.5, 0) * CFrame.Angles(swing, 0, 0)
+            rightHip.C0 = CFrame.new(0.3, -0.5, 0) * CFrame.Angles(-swing, 0, 0)
+            
+            -- Animate arms (opposite to legs)
+            leftShoulder.C0 = CFrame.new(-0.5, 0.4, 0) * CFrame.Angles(-swing * 0.6, 0, 0)
+            rightShoulder.C0 = CFrame.new(0.5, 0.4, 0) * CFrame.Angles(swing * 0.6, 0, 0)
+        else
+            -- Idle: smoothly return to neutral
+            animTime = 0
+            
+            leftHip.C0 = leftHip.C0:Lerp(CFrame.new(-0.3, -0.5, 0), 0.1)
+            rightHip.C0 = rightHip.C0:Lerp(CFrame.new(0.3, -0.5, 0), 0.1)
+            leftShoulder.C0 = leftShoulder.C0:Lerp(CFrame.new(-0.5, 0.4, 0), 0.1)
+            rightShoulder.C0 = rightShoulder.C0:Lerp(CFrame.new(0.5, 0.4, 0), 0.1)
+        end
+        
+        lastVelocity = velocity
+    end)
+    
     minionData.aiLoop = task.spawn(function()
         while minionData.model and minionData.model.Parent do
             local minion = minionData.model
@@ -330,6 +394,11 @@ function MinionAI.RemoveMinion(minionData)
             table.remove(ActiveMinions, i)
             break
         end
+    end
+    
+    -- Disconnect animation loop
+    if minionData.animLoop then
+        minionData.animLoop:Disconnect()
     end
     
     if minionData.model then
