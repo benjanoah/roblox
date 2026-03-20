@@ -271,6 +271,45 @@ local function BuildDungeon()
         end
     end
     
+    -- Place Treasure in center of first room (player spawn)
+    if #rooms > 0 then
+        local room = rooms[1]
+        local treasure = Instance.new("Part")
+        treasure.Name = "Treasure"
+        treasure.Size = Vector3.new(3, 3, 3)
+        treasure.Position = Vector3.new(
+            room.centerX * CELL_SIZE - GRID_SIZE/2,
+            2,
+            room.centerY * CELL_SIZE - GRID_SIZE/2
+        )
+        treasure.Anchored = true
+        treasure.Color = Color3.fromRGB(255, 215, 0) -- Gold
+        treasure.Material = Enum.Material.Neon
+        treasure.Parent = dungeon
+        
+        print("💎 Treasure placed in center room")
+    end
+    
+    -- Place Exit in a random far room
+    if #rooms >= 3 then
+        local exitRoom = rooms[#rooms] -- Last room (furthest)
+        local exit = Instance.new("Part")
+        exit.Name = "Exit"
+        exit.Size = Vector3.new(4, 0.5, 4)
+        exit.Position = Vector3.new(
+            exitRoom.centerX * CELL_SIZE - GRID_SIZE/2,
+            0.5,
+            exitRoom.centerY * CELL_SIZE - GRID_SIZE/2
+        )
+        exit.Anchored = true
+        exit.Color = Color3.fromRGB(0, 255, 0) -- Green
+        exit.Material = Enum.Material.Neon
+        exit.Transparency = 0.5
+        exit.Parent = dungeon
+        
+        print("🚪 Exit placed in far room")
+    end
+    
     print("🏗️ Dungeon built in workspace!")
 end
 
