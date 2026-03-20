@@ -449,8 +449,25 @@ function HeroAI.RunAI(heroData)
                 local hrp = hero:FindFirstChild("HumanoidRootPart")
                 if hrp and (hrp.Position - exit.Position).Magnitude < 5 then
                     heroData.State = "Escaped"
-                    print("⚠️ HERO ESCAPED WITH TREASURE! GAME OVER!")
-                    -- TODO: Trigger game over
+                    print("⚠️ HERO ESCAPED WITH TREASURE!")
+                    
+                    -- Damage player for letting knight escape!
+                    local Players = game:GetService("Players")
+                    local SoundSystem = require(script.Parent.SoundSystem)
+                    
+                    for _, player in ipairs(Players:GetPlayers()) do
+                        if player.Character then
+                            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+                            if humanoid then
+                                humanoid:TakeDamage(50)
+                                print("💔 " .. player.Name .. " lost 50 HP! (Knight escaped)")
+                                
+                                -- Play warning sound
+                                SoundSystem.PlaySoundGlobal("HeroDeath", 0.5, 0.8)
+                            end
+                        end
+                    end
+                    
                     hero:Destroy()
                 end
             end
