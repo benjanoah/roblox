@@ -46,7 +46,7 @@ local function CreateMinionBody(position, health, damage)
     hrp.Name = "HumanoidRootPart"
     hrp.Size = Vector3.new(1.5, 1.5, 1)
     hrp.Position = position
-    hrp.BrickColor = BrickColor.new("Bright red")
+    hrp.BrickColor = BrickColor.new("Lime green") -- Groen body
     hrp.Material = Enum.Material.Neon
     hrp.Parent = minion
     
@@ -55,7 +55,7 @@ local function CreateMinionBody(position, health, damage)
     head.Name = "Head"
     head.Size = Vector3.new(1.2, 0.8, 0.8)
     head.Position = position + Vector3.new(0, 1.2, 0)
-    head.BrickColor = BrickColor.new("Crimson")
+    head.BrickColor = BrickColor.new("Lime green") -- Groen hoofd
     head.Parent = minion
     
     local headWeld = Instance.new("Weld")
@@ -69,7 +69,7 @@ local function CreateMinionBody(position, health, damage)
     leftEye.Name = "LeftEye"
     leftEye.Size = Vector3.new(0.2, 0.2, 0.1)
     leftEye.Position = head.Position + Vector3.new(-0.3, 0, -0.4)
-    leftEye.BrickColor = BrickColor.new("Lime green")
+    leftEye.BrickColor = BrickColor.new("Really red") -- Rode ogen
     leftEye.Material = Enum.Material.Neon
     leftEye.Parent = minion
     
@@ -83,7 +83,7 @@ local function CreateMinionBody(position, health, damage)
     rightEye.Name = "RightEye"
     rightEye.Size = Vector3.new(0.2, 0.2, 0.1)
     rightEye.Position = head.Position + Vector3.new(0.3, 0, -0.4)
-    rightEye.BrickColor = BrickColor.new("Lime green")
+    rightEye.BrickColor = BrickColor.new("Really red") -- Rode ogen
     rightEye.Material = Enum.Material.Neon
     rightEye.Parent = minion
     
