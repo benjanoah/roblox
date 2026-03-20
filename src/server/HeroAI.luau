@@ -23,22 +23,21 @@ local function CreateHeroBody(position)
     local hero = Instance.new("Model")
     hero.Name = "Hero"
     
-    -- HumanoidRootPart (center of character)
+    -- HumanoidRootPart (center of character) - Minion size!
     local hrp = Instance.new("Part")
     hrp.Name = "HumanoidRootPart"
-    hrp.Size = Vector3.new(2, 2, 1)
+    hrp.Size = Vector3.new(1, 1, 0.5)
     hrp.Position = position
     hrp.CFrame = CFrame.new(position) * CFrame.Angles(0, math.rad(180), 0) -- Face forward!
-    hrp.BrickColor = BrickColor.new("Bright blue")
-    hrp.TopSurface = Enum.SurfaceType.Smooth
-    hrp.BottomSurface = Enum.SurfaceType.Smooth
+    hrp.Transparency = 1
+    hrp.CanCollide = false
     hrp.Parent = hero
     
-    -- Head
+    -- Head - Minion size!
     local head = Instance.new("Part")
     head.Name = "Head"
-    head.Size = Vector3.new(2, 1, 1)
-    head.Position = position + Vector3.new(0, 1.5, 0)
+    head.Size = Vector3.new(0.8, 0.8, 0.8)
+    head.Position = position + Vector3.new(0, 1, 0)
     head.BrickColor = BrickColor.new("Light orange")
     head.TopSurface = Enum.SurfaceType.Smooth
     head.BottomSurface = Enum.SurfaceType.Smooth
@@ -47,13 +46,13 @@ local function CreateHeroBody(position)
     local headWeld = Instance.new("Weld")
     headWeld.Part0 = hrp
     headWeld.Part1 = head
-    headWeld.C0 = CFrame.new(0, 1.5, 0)
+    headWeld.C0 = CFrame.new(0, 0.9, 0)
     headWeld.Parent = head
     
-    -- Torso
+    -- Torso - Minion size!
     local torso = Instance.new("Part")
     torso.Name = "Torso"
-    torso.Size = Vector3.new(2, 2, 1)
+    torso.Size = Vector3.new(1, 1, 0.5)
     torso.Position = position
     torso.BrickColor = BrickColor.new("Bright blue")
     torso.TopSurface = Enum.SurfaceType.Smooth
@@ -66,11 +65,11 @@ local function CreateHeroBody(position)
     torsoWeld.C0 = CFrame.new(0, 0, 0)
     torsoWeld.Parent = torso
     
-    -- Left Leg
+    -- Left Leg - Minion size!
     local leftLeg = Instance.new("Part")
     leftLeg.Name = "Left Leg"
-    leftLeg.Size = Vector3.new(1, 2, 1)
-    leftLeg.Position = position + Vector3.new(-0.5, -2, 0)
+    leftLeg.Size = Vector3.new(0.4, 1, 0.4)
+    leftLeg.Position = position + Vector3.new(-0.3, -1, 0)
     leftLeg.BrickColor = BrickColor.new("Bright green")
     leftLeg.TopSurface = Enum.SurfaceType.Smooth
     leftLeg.BottomSurface = Enum.SurfaceType.Smooth
@@ -78,17 +77,17 @@ local function CreateHeroBody(position)
     
     local leftLegWeld = Instance.new("Motor6D")
     leftLegWeld.Name = "Left Hip"
-    leftLegWeld.Part0 = hrp
+    leftLegWeld.Part0 = torso
     leftLegWeld.Part1 = leftLeg
-    leftLegWeld.C0 = CFrame.new(-0.5, -1, 0)
-    leftLegWeld.C1 = CFrame.new(0, 1, 0)
-    leftLegWeld.Parent = hrp
+    leftLegWeld.C0 = CFrame.new(-0.3, -0.5, 0)
+    leftLegWeld.C1 = CFrame.new(0, 0.5, 0)
+    leftLegWeld.Parent = torso
     
-    -- Right Leg
+    -- Right Leg - Minion size!
     local rightLeg = Instance.new("Part")
     rightLeg.Name = "Right Leg"
-    rightLeg.Size = Vector3.new(1, 2, 1)
-    rightLeg.Position = position + Vector3.new(0.5, -2, 0)
+    rightLeg.Size = Vector3.new(0.4, 1, 0.4)
+    rightLeg.Position = position + Vector3.new(0.3, -1, 0)
     rightLeg.BrickColor = BrickColor.new("Bright green")
     rightLeg.TopSurface = Enum.SurfaceType.Smooth
     rightLeg.BottomSurface = Enum.SurfaceType.Smooth
@@ -96,43 +95,47 @@ local function CreateHeroBody(position)
     
     local rightLegWeld = Instance.new("Motor6D")
     rightLegWeld.Name = "Right Hip"
-    rightLegWeld.Part0 = hrp
+    rightLegWeld.Part0 = torso
     rightLegWeld.Part1 = rightLeg
-    rightLegWeld.C0 = CFrame.new(0.5, -1, 0)
-    rightLegWeld.C1 = CFrame.new(0, 1, 0)
-    rightLegWeld.Parent = hrp
+    rightLegWeld.C0 = CFrame.new(0.3, -0.5, 0)
+    rightLegWeld.C1 = CFrame.new(0, 0.5, 0)
+    rightLegWeld.Parent = torso
     
-    -- Left Arm
+    -- Left Arm - Minion size!
     local leftArm = Instance.new("Part")
     leftArm.Name = "Left Arm"
-    leftArm.Size = Vector3.new(1, 2, 1)
-    leftArm.Position = position + Vector3.new(-1.5, 0, 0)
+    leftArm.Size = Vector3.new(0.4, 1, 0.4)
+    leftArm.Position = position + Vector3.new(-0.7, 0, 0)
     leftArm.BrickColor = BrickColor.new("Light orange")
     leftArm.TopSurface = Enum.SurfaceType.Smooth
     leftArm.BottomSurface = Enum.SurfaceType.Smooth
     leftArm.Parent = hero
     
-    local leftArmWeld = Instance.new("Weld")
-    leftArmWeld.Part0 = hrp
-    leftArmWeld.Part1 = leftArm
-    leftArmWeld.C0 = CFrame.new(-1.5, 0, 0)
-    leftArmWeld.Parent = leftArm
+    local leftShoulder = Instance.new("Motor6D")
+    leftShoulder.Name = "Left Shoulder"
+    leftShoulder.Part0 = torso
+    leftShoulder.Part1 = leftArm
+    leftShoulder.C0 = CFrame.new(-0.5, 0.4, 0)
+    leftShoulder.C1 = CFrame.new(0, 0.5, 0)
+    leftShoulder.Parent = torso
     
-    -- Right Arm
+    -- Right Arm - Minion size!
     local rightArm = Instance.new("Part")
     rightArm.Name = "Right Arm"
-    rightArm.Size = Vector3.new(1, 2, 1)
-    rightArm.Position = position + Vector3.new(1.5, 0, 0)
+    rightArm.Size = Vector3.new(0.4, 1, 0.4)
+    rightArm.Position = position + Vector3.new(0.7, 0, 0)
     rightArm.BrickColor = BrickColor.new("Light orange")
     rightArm.TopSurface = Enum.SurfaceType.Smooth
     rightArm.BottomSurface = Enum.SurfaceType.Smooth
     rightArm.Parent = hero
     
-    local rightArmWeld = Instance.new("Weld")
-    rightArmWeld.Part0 = hrp
-    rightArmWeld.Part1 = rightArm
-    rightArmWeld.C0 = CFrame.new(1.5, 0, 0)
-    rightArmWeld.Parent = rightArm
+    local rightShoulder = Instance.new("Motor6D")
+    rightShoulder.Name = "Right Shoulder"
+    rightShoulder.Part0 = torso
+    rightShoulder.Part1 = rightArm
+    rightShoulder.C0 = CFrame.new(0.5, 0.4, 0)
+    rightShoulder.C1 = CFrame.new(0, 0.5, 0)
+    rightShoulder.Parent = torso
     
     -- Humanoid
     local humanoid = Instance.new("Humanoid")
@@ -152,12 +155,12 @@ local function CreateHeroBody(position)
     bodyColors.RightLegColor = BrickColor.new("Dark stone grey")
     bodyColors.Parent = hero
     
-    -- KNIGHT OUTFIT --
+    -- KNIGHT OUTFIT (scaled to minion size) --
     
     -- Helmet (on head)
     local helmet = Instance.new("Part")
     helmet.Name = "Helmet"
-    helmet.Size = Vector3.new(2.2, 1.2, 1.2) -- Slightly bigger than head
+    helmet.Size = Vector3.new(0.9, 0.9, 0.9) -- Minion size
     helmet.Position = head.Position
     helmet.BrickColor = BrickColor.new("Silver")
     helmet.Material = Enum.Material.Metal
@@ -174,8 +177,8 @@ local function CreateHeroBody(position)
     -- Visor (front of helmet)
     local visor = Instance.new("Part")
     visor.Name = "Visor"
-    visor.Size = Vector3.new(1.5, 0.3, 0.1)
-    visor.Position = head.Position + Vector3.new(0, 0, -0.6)
+    visor.Size = Vector3.new(0.6, 0.15, 0.05)
+    visor.Position = head.Position + Vector3.new(0, 0, -0.45)
     visor.BrickColor = BrickColor.new("Really black")
     visor.Material = Enum.Material.Glass
     visor.TopSurface = Enum.SurfaceType.Smooth
@@ -185,13 +188,13 @@ local function CreateHeroBody(position)
     local visorWeld = Instance.new("Weld")
     visorWeld.Part0 = helmet
     visorWeld.Part1 = visor
-    visorWeld.C0 = CFrame.new(0, 0, -0.6) -- Front side (negative Z after 180° rotation)
+    visorWeld.C0 = CFrame.new(0, 0, -0.45)
     visorWeld.Parent = visor
     
     -- Chestplate (over torso)
     local chestplate = Instance.new("Part")
     chestplate.Name = "Chestplate"
-    chestplate.Size = Vector3.new(2.3, 2.2, 1.1)
+    chestplate.Size = Vector3.new(1.1, 1.1, 0.55)
     chestplate.Position = torso.Position
     chestplate.BrickColor = BrickColor.new("Silver")
     chestplate.Material = Enum.Material.Metal
@@ -208,8 +211,8 @@ local function CreateHeroBody(position)
     -- Blue emblem on chest
     local emblem = Instance.new("Part")
     emblem.Name = "Emblem"
-    emblem.Size = Vector3.new(0.8, 0.8, 0.05)
-    emblem.Position = torso.Position + Vector3.new(0, 0.3, -0.6)
+    emblem.Size = Vector3.new(0.4, 0.4, 0.05)
+    emblem.Position = torso.Position + Vector3.new(0, 0.15, -0.3)
     emblem.BrickColor = BrickColor.new("Bright blue")
     emblem.Material = Enum.Material.Neon
     emblem.TopSurface = Enum.SurfaceType.Smooth
@@ -219,14 +222,14 @@ local function CreateHeroBody(position)
     local emblemWeld = Instance.new("Weld")
     emblemWeld.Part0 = chestplate
     emblemWeld.Part1 = emblem
-    emblemWeld.C0 = CFrame.new(0, 0.3, -0.6) -- Front of chest
+    emblemWeld.C0 = CFrame.new(0, 0.15, -0.3)
     emblemWeld.Parent = emblem
     
-    -- Shield (on left arm)
+    -- Shield (on left arm) - Minion size!
     local shield = Instance.new("Part")
     shield.Name = "Shield"
-    shield.Size = Vector3.new(0.3, 2, 1.5)
-    shield.Position = leftArm.Position + Vector3.new(-0.5, 0, 0)
+    shield.Size = Vector3.new(0.15, 1, 0.75)
+    shield.Position = leftArm.Position + Vector3.new(-0.25, 0, 0)
     shield.BrickColor = BrickColor.new("Silver")
     shield.Material = Enum.Material.Metal
     shield.TopSurface = Enum.SurfaceType.Smooth
@@ -236,14 +239,14 @@ local function CreateHeroBody(position)
     local shieldWeld = Instance.new("Weld")
     shieldWeld.Part0 = leftArm
     shieldWeld.Part1 = shield
-    shieldWeld.C0 = CFrame.new(-0.5, 0, 0)
+    shieldWeld.C0 = CFrame.new(-0.25, 0, 0)
     shieldWeld.Parent = shield
     
-    -- Shield emblem (blue cross)
+    -- Shield emblem (blue cross) - Minion size!
     local shieldEmblem = Instance.new("Part")
     shieldEmblem.Name = "ShieldEmblem"
-    shieldEmblem.Size = Vector3.new(0.1, 1.5, 0.3)
-    shieldEmblem.Position = shield.Position + Vector3.new(-0.2, 0, 0)
+    shieldEmblem.Size = Vector3.new(0.05, 0.75, 0.15)
+    shieldEmblem.Position = shield.Position + Vector3.new(-0.1, 0, 0)
     shieldEmblem.BrickColor = BrickColor.new("Bright blue")
     shieldEmblem.Material = Enum.Material.Neon
     shieldEmblem.TopSurface = Enum.SurfaceType.Smooth
@@ -253,14 +256,14 @@ local function CreateHeroBody(position)
     local shieldEmblemWeld = Instance.new("Weld")
     shieldEmblemWeld.Part0 = shield
     shieldEmblemWeld.Part1 = shieldEmblem
-    shieldEmblemWeld.C0 = CFrame.new(-0.2, 0, 0)
+    shieldEmblemWeld.C0 = CFrame.new(-0.1, 0, 0)
     shieldEmblemWeld.Parent = shieldEmblem
     
-    -- Sword (in right hand)
+    -- Sword (in right hand) - Minion size!
     local sword = Instance.new("Part")
     sword.Name = "Sword"
-    sword.Size = Vector3.new(0.2, 3, 0.5)
-    sword.Position = rightArm.Position + Vector3.new(0, -1, -1.5)
+    sword.Size = Vector3.new(0.1, 1.5, 0.25)
+    sword.Position = rightArm.Position + Vector3.new(0, -0.5, -0.75)
     sword.BrickColor = BrickColor.new("Silver")
     sword.Material = Enum.Material.Metal
     sword.TopSurface = Enum.SurfaceType.Smooth
@@ -271,14 +274,14 @@ local function CreateHeroBody(position)
     local swordWeld = Instance.new("Weld")
     swordWeld.Part0 = rightArm
     swordWeld.Part1 = sword
-    swordWeld.C0 = CFrame.new(0, -1, -1.5) * CFrame.Angles(math.rad(90), 0, 0) -- Point blade forward
+    swordWeld.C0 = CFrame.new(0, -0.5, -0.75) * CFrame.Angles(math.rad(90), 0, 0)
     swordWeld.Parent = sword
     
-    -- Sword handle (brown, at top of blade where hand grips)
+    -- Sword handle (brown, at top of blade where hand grips) - Minion size!
     local swordHandle = Instance.new("Part")
     swordHandle.Name = "SwordHandle"
-    swordHandle.Size = Vector3.new(0.3, 0.8, 0.3)
-    swordHandle.Position = sword.Position + Vector3.new(0, 1.5, 0)
+    swordHandle.Size = Vector3.new(0.15, 0.4, 0.15)
+    swordHandle.Position = sword.Position + Vector3.new(0, 0.75, 0)
     swordHandle.BrickColor = BrickColor.new("Dark orange")
     swordHandle.Material = Enum.Material.Wood
     swordHandle.TopSurface = Enum.SurfaceType.Smooth
@@ -288,7 +291,7 @@ local function CreateHeroBody(position)
     local handleWeld = Instance.new("Weld")
     handleWeld.Part0 = sword
     handleWeld.Part1 = swordHandle
-    handleWeld.C0 = CFrame.new(0, 1.5, 0) -- Top of blade
+    handleWeld.C0 = CFrame.new(0, 0.75, 0)
     handleWeld.Parent = swordHandle
     
     return hero
