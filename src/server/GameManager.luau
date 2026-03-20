@@ -11,6 +11,7 @@ local Players = game:GetService("Players")
 local GameConfig = require(ReplicatedStorage.Shared.GameConfig)
 local HeroAI = require(script.Parent.HeroAI)
 local CombatSystem = require(script.Parent.CombatSystem)
+local DungeonGenerator = require(script.Parent.DungeonGenerator)
 
 local GameState = "Waiting" -- Waiting, PrepTime, WaveActive, WaveComplete, Ended
 local PrepTimeRemaining = 60 -- 60 seconds initial prep time
@@ -23,6 +24,9 @@ local HeroesKilledThisWave = 0
 ]]
 function GameManager.StartGame()
     print("🎮 Starting Dungeon Boss Simulator!")
+    
+    -- Generate random dungeon
+    DungeonGenerator.Generate()
     
     GameState = "PrepTime"
     PrepTimeRemaining = 60
@@ -81,6 +85,10 @@ function GameManager.SetupPlayer()
             if humanoid then
                 humanoid.WalkSpeed = GameConfig.Zombie.WalkSpeed
                 CombatSystem.InitializeHealth(player.Character, GameConfig.Zombie.Health)
+                
+                -- Teleport to player spawn (center of dungeon)
+                local spawnPos = DungeonGenerator.GetPlayerSpawn()
+                player.Character:MoveTo(spawnPos)
                 
                 -- Give zombie appearance (optional)
                 local hrp = player.Character:FindFirstChild("HumanoidRootPart")
@@ -181,24 +189,22 @@ end
     Spawn heroes for a wave
 ]]
 function GameManager.SpawnWaveHeroes(waveConfig)
-    local heroSpawn = workspace:FindFirstChild("HeroSpawn")
+    -- Get random spawn positions from dungeon
+    local spawnPositions = DungeonGenerator.GetHeroSpawns(waveConfig.HeroCount)
     
-    if not heroSpawn then
-        warn("⚠️ HeroSpawn not found in workspace!")
-        return
-    end
-    
+    local spawnIndex = 1
     while HeroesSpawnedThisWave < waveConfig.HeroCount and GameState == "WaveActive" do
-        local hero = HeroAI.SpawnHero(heroSpawn.Position + Vector3.new(
-            math.random(-5, 5),
-            5,
-            math.random(-5, 5)
-        ))
+        -- Use dungeon spawn position
+        local spawnPos = spawnPositions[spawnIndex] or Vector3.new(0, 5, 0)
+        spawnPos = spawnPos + Vector3.new(0, 2, 0) -- Spawn a bit higher
+        
+        local hero = HeroAI.SpawnHero(spawnPos)
         
         -- Initialize hero health
         CombatSystem.InitializeHealth(hero, GameConfig.Hero.Health)
         
         HeroesSpawnedThisWave += 1
+        spawnIndex += 1
         print("🗡️ Hero " .. HeroesSpawnedThisWave .. "/" .. waveConfig.HeroCount .. " spawned!")
         
         task.wait(waveConfig.SpawnInterval)
