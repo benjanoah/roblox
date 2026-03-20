@@ -8,6 +8,7 @@ local MinionSystem = {}
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local MinionAI = require(script.Parent.MinionAI)
 local MoneySystem = require(script.Parent.MoneySystem)
+local ShopSystem = require(script.Parent.ShopSystem)
 
 -- Constants
 MinionSystem.MINION_COST = 20
@@ -60,11 +61,16 @@ function MinionSystem.SpawnMinion(player)
         return
     end
     
-    -- Spawn minion
-    local minion = MinionAI.SpawnMinion(player)
+    -- Get minion upgrade stats
+    local boostLevel = ShopSystem.GetUpgradeLevel(player, "MinionBoost")
+    local minionHealth = 50 + (boostLevel * 25)
+    local minionDamage = 15 + (boostLevel * 5)
+    
+    -- Spawn minion with upgraded stats
+    local minion = MinionAI.SpawnMinion(player, minionHealth, minionDamage)
     
     if minion then
-        print("✅ " .. player.Name .. " spawned a minion!")
+        print("✅ " .. player.Name .. " spawned a minion! (HP:" .. minionHealth .. ", DMG:" .. minionDamage .. ")")
     end
 end
 

@@ -8,6 +8,7 @@ local TrapSystem = {}
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local BearTrap = require(script.Parent.BearTrap)
 local MoneySystem = require(script.Parent.MoneySystem)
+local ShopSystem = require(script.Parent.ShopSystem)
 
 -- Active traps in the game
 local activeTraps = {}
@@ -32,20 +33,24 @@ function TrapSystem.Init()
 end
 
 function TrapSystem.PlaceTrap(player, position)
+    -- Calculate trap cost with discount
+    local discountLevel = ShopSystem.GetUpgradeLevel(player, "TrapDiscount")
+    local trapCost = math.max(5 - discountLevel, 2) -- Base 5, min 2 gold
+    
     -- Check if player can afford trap
-    if not MoneySystem.CanAfford(player, MoneySystem.TRAP_COST) then
-        print("❌ " .. player.Name .. " cannot afford trap (need " .. MoneySystem.TRAP_COST .. " gold)")
+    if not MoneySystem.CanAfford(player, trapCost) then
+        print("❌ " .. player.Name .. " cannot afford trap (need " .. trapCost .. " gold)")
         
         -- Send feedback to client
         local trapFeedbackEvent = ReplicatedStorage:FindFirstChild("TrapFeedback")
         if trapFeedbackEvent then
-            trapFeedbackEvent:FireClient(player, "Not enough gold! Need " .. MoneySystem.TRAP_COST .. " gold.")
+            trapFeedbackEvent:FireClient(player, "Not enough gold! Need " .. trapCost .. " gold.")
         end
         return
     end
     
     -- Charge player
-    if not MoneySystem.RemoveMoney(player, MoneySystem.TRAP_COST) then
+    if not MoneySystem.RemoveMoney(player, trapCost) then
         return
     end
     

@@ -30,7 +30,11 @@ MinionAI.WALK_SPEED = 14
 --[[
     Create a minion body
 ]]
-local function CreateMinionBody(position)
+local function CreateMinionBody(position, health, damage)
+    -- Use custom stats or defaults
+    health = health or MinionAI.HEALTH
+    damage = damage or MinionAI.DAMAGE
+    
     -- Pick random name
     local randomName = MinionNames[math.random(1, #MinionNames)]
     
@@ -91,11 +95,14 @@ local function CreateMinionBody(position)
     
     -- Humanoid
     local humanoid = Instance.new("Humanoid")
-    humanoid.MaxHealth = MinionAI.HEALTH
-    humanoid.Health = MinionAI.HEALTH
+    humanoid.MaxHealth = health
+    humanoid.Health = health
     humanoid.WalkSpeed = MinionAI.WALK_SPEED
     humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None -- Hide health bar
     humanoid.Parent = minion
+    
+    -- Store custom damage in minion
+    minion:SetAttribute("Damage", damage)
     
     minion.Parent = workspace
     
@@ -123,7 +130,7 @@ end
 --[[
     Spawn a minion for a player
 ]]
-function MinionAI.SpawnMinion(player)
+function MinionAI.SpawnMinion(player, health, damage)
     if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
         return nil
     end
@@ -131,7 +138,7 @@ function MinionAI.SpawnMinion(player)
     local playerPos = player.Character.HumanoidRootPart.Position
     local spawnPos = playerPos + Vector3.new(math.random(-3, 3), 0, math.random(-3, 3))
     
-    local minion = CreateMinionBody(spawnPos)
+    local minion = CreateMinionBody(spawnPos, health, damage)
     
     local minionData = {
         model = minion,
@@ -199,8 +206,10 @@ function MinionAI.StartAI(minionData)
                 if now - minionData.lastAttackTime >= MinionAI.ATTACK_COOLDOWN then
                     local heroHumanoid = nearestHero:FindFirstChildOfClass("Humanoid")
                     if heroHumanoid then
-                        heroHumanoid:TakeDamage(MinionAI.DAMAGE)
-                        print("👹💥 " .. minion.Name .. " attacked hero for " .. MinionAI.DAMAGE .. " damage!")
+                        -- Get custom damage from minion
+                        local damage = minion:GetAttribute("Damage") or MinionAI.DAMAGE
+                        heroHumanoid:TakeDamage(damage)
+                        print("👹💥 " .. minion.Name .. " attacked hero for " .. damage .. " damage!")
                         minionData.lastAttackTime = now
                     end
                 end

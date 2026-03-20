@@ -9,6 +9,8 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local ShopUI = require(script.ShopUI)
+
 local player = Players.LocalPlayer
 local mouse = player:GetMouse()
 
@@ -20,6 +22,10 @@ local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 -- Attack cooldown
 local lastAttack = 0
 local attackCooldown = 1.0 -- seconds
+
+-- Player stats (updated from shop)
+local playerDamage = 25
+local playerDamageEvent = ReplicatedStorage:WaitForChild("PlayerDamageUpdate")
 
 -- Trap placement
 local lastTrapPlacement = 0
@@ -44,6 +50,12 @@ local minionFeedbackEvent = ReplicatedStorage:WaitForChild("MinionFeedback")
 -- Listen for minion feedback
 minionFeedbackEvent.OnClientEvent:Connect(function(message)
     print("⚠️ " .. message)
+end)
+
+-- Listen for player damage updates from shop
+playerDamageEvent.OnClientEvent:Connect(function(newDamage)
+    playerDamage = newDamage
+    print("💪 Damage upgraded to " .. newDamage .. "!")
 end)
 
 -- Sound IDs (same as server)
@@ -88,7 +100,7 @@ local function MeleeAttack()
     
     -- Find nearby enemies in range
     local attackRange = 8
-    local attackDamage = 25
+    local attackDamage = playerDamage -- Use shop-upgraded damage
     
     -- Find the CLOSEST hero within range (not just the first one!)
     local closestHero = nil
@@ -208,6 +220,11 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     -- M key = Spawn minion
     if input.KeyCode == Enum.KeyCode.M then
         SpawnMinion()
+    end
+    
+    -- B key = Toggle shop
+    if input.KeyCode == Enum.KeyCode.B then
+        ShopUI.Toggle()
     end
 end)
 
@@ -396,3 +413,4 @@ print("   🖱️ Left Click = Melee Attack")
 print("   ⌨️ Space = Melee Attack")
 print("   🪤 T = Place Bear Trap (5 gold)")
 print("   👹 M = Spawn Minion (20 gold)")
+print("   🏪 B = Open Shop")
