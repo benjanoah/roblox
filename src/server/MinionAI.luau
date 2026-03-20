@@ -28,7 +28,7 @@ MinionAI.FOLLOW_DISTANCE = 10
 MinionAI.WALK_SPEED = 14
 
 --[[
-    Create a minion body
+    Create a minion body (R6 zombie style)
 ]]
 local function CreateMinionBody(position, health, damage)
     -- Use custom stats or defaults
@@ -41,57 +41,127 @@ local function CreateMinionBody(position, health, damage)
     local minion = Instance.new("Model")
     minion.Name = randomName
     
-    -- HumanoidRootPart
+    local color = BrickColor.new("Lime green") -- Groen zombie!
+    
+    -- HumanoidRootPart (invisible center)
     local hrp = Instance.new("Part")
     hrp.Name = "HumanoidRootPart"
-    hrp.Size = Vector3.new(1.5, 1.5, 1)
+    hrp.Size = Vector3.new(1, 1, 0.5)
     hrp.Position = position
-    hrp.BrickColor = BrickColor.new("Lime green") -- Groen body
-    hrp.Material = Enum.Material.Neon
+    hrp.Transparency = 1
+    hrp.CanCollide = false
     hrp.Parent = minion
     
-    -- Head (small demon head)
+    -- Torso (body)
+    local torso = Instance.new("Part")
+    torso.Name = "Torso"
+    torso.Size = Vector3.new(1, 1, 0.5)
+    torso.Position = position
+    torso.BrickColor = color
+    torso.Parent = minion
+    
+    local torsoWeld = Instance.new("Weld")
+    torsoWeld.Part0 = hrp
+    torsoWeld.Part1 = torso
+    torsoWeld.C0 = CFrame.new(0, 0, 0)
+    torsoWeld.Parent = torso
+    
+    -- Head
     local head = Instance.new("Part")
     head.Name = "Head"
-    head.Size = Vector3.new(1.2, 0.8, 0.8)
-    head.Position = position + Vector3.new(0, 1.2, 0)
-    head.BrickColor = BrickColor.new("Lime green") -- Groen hoofd
+    head.Size = Vector3.new(0.8, 0.8, 0.8)
+    head.Position = position + Vector3.new(0, 1, 0)
+    head.BrickColor = color
     head.Parent = minion
     
     local headWeld = Instance.new("Weld")
-    headWeld.Part0 = hrp
+    headWeld.Part0 = torso
     headWeld.Part1 = head
-    headWeld.C0 = CFrame.new(0, 1.2, 0)
+    headWeld.C0 = CFrame.new(0, 0.9, 0)
     headWeld.Parent = head
     
-    -- Eyes (glowing)
+    -- Eyes (glowing red)
     local leftEye = Instance.new("Part")
     leftEye.Name = "LeftEye"
-    leftEye.Size = Vector3.new(0.2, 0.2, 0.1)
-    leftEye.Position = head.Position + Vector3.new(-0.3, 0, -0.4)
-    leftEye.BrickColor = BrickColor.new("Really red") -- Rode ogen
+    leftEye.Size = Vector3.new(0.15, 0.15, 0.1)
+    leftEye.BrickColor = BrickColor.new("Really red")
     leftEye.Material = Enum.Material.Neon
     leftEye.Parent = minion
     
     local leftEyeWeld = Instance.new("Weld")
     leftEyeWeld.Part0 = head
     leftEyeWeld.Part1 = leftEye
-    leftEyeWeld.C0 = CFrame.new(-0.3, 0, -0.4)
+    leftEyeWeld.C0 = CFrame.new(-0.2, 0.1, -0.41)
     leftEyeWeld.Parent = leftEye
     
     local rightEye = Instance.new("Part")
     rightEye.Name = "RightEye"
-    rightEye.Size = Vector3.new(0.2, 0.2, 0.1)
-    rightEye.Position = head.Position + Vector3.new(0.3, 0, -0.4)
-    rightEye.BrickColor = BrickColor.new("Really red") -- Rode ogen
+    rightEye.Size = Vector3.new(0.15, 0.15, 0.1)
+    rightEye.BrickColor = BrickColor.new("Really red")
     rightEye.Material = Enum.Material.Neon
     rightEye.Parent = minion
     
     local rightEyeWeld = Instance.new("Weld")
     rightEyeWeld.Part0 = head
     rightEyeWeld.Part1 = rightEye
-    rightEyeWeld.C0 = CFrame.new(0.3, 0, -0.4)
+    rightEyeWeld.C0 = CFrame.new(0.2, 0.1, -0.41)
     rightEyeWeld.Parent = rightEye
+    
+    -- Left Arm
+    local leftArm = Instance.new("Part")
+    leftArm.Name = "Left Arm"
+    leftArm.Size = Vector3.new(0.4, 1, 0.4)
+    leftArm.Position = position + Vector3.new(-0.7, 0, 0)
+    leftArm.BrickColor = color
+    leftArm.Parent = minion
+    
+    local leftArmWeld = Instance.new("Weld")
+    leftArmWeld.Part0 = torso
+    leftArmWeld.Part1 = leftArm
+    leftArmWeld.C0 = CFrame.new(-0.7, 0, 0)
+    leftArmWeld.Parent = leftArm
+    
+    -- Right Arm
+    local rightArm = Instance.new("Part")
+    rightArm.Name = "Right Arm"
+    rightArm.Size = Vector3.new(0.4, 1, 0.4)
+    rightArm.Position = position + Vector3.new(0.7, 0, 0)
+    rightArm.BrickColor = color
+    rightArm.Parent = minion
+    
+    local rightArmWeld = Instance.new("Weld")
+    rightArmWeld.Part0 = torso
+    rightArmWeld.Part1 = rightArm
+    rightArmWeld.C0 = CFrame.new(0.7, 0, 0)
+    rightArmWeld.Parent = rightArm
+    
+    -- Left Leg
+    local leftLeg = Instance.new("Part")
+    leftLeg.Name = "Left Leg"
+    leftLeg.Size = Vector3.new(0.4, 1, 0.4)
+    leftLeg.Position = position + Vector3.new(-0.3, -1, 0)
+    leftLeg.BrickColor = color
+    leftLeg.Parent = minion
+    
+    local leftLegWeld = Instance.new("Weld")
+    leftLegWeld.Part0 = torso
+    leftLegWeld.Part1 = leftLeg
+    leftLegWeld.C0 = CFrame.new(-0.3, -1, 0)
+    leftLegWeld.Parent = leftLeg
+    
+    -- Right Leg
+    local rightLeg = Instance.new("Part")
+    rightLeg.Name = "Right Leg"
+    rightLeg.Size = Vector3.new(0.4, 1, 0.4)
+    rightLeg.Position = position + Vector3.new(0.3, -1, 0)
+    rightLeg.BrickColor = color
+    rightLeg.Parent = minion
+    
+    local rightLegWeld = Instance.new("Weld")
+    rightLegWeld.Part0 = torso
+    rightLegWeld.Part1 = rightLeg
+    rightLegWeld.C0 = CFrame.new(0.3, -1, 0)
+    rightLegWeld.Parent = rightLeg
     
     -- Humanoid
     local humanoid = Instance.new("Humanoid")
