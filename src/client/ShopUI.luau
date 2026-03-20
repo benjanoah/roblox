@@ -7,22 +7,39 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local player = Players.LocalPlayer
-local screenGui = player:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
 
 local ShopUI = {}
 
 local shopFrame = nil
 local isShopOpen = false
+local screenGui = nil
 
--- Events
-local getShopDataEvent = ReplicatedStorage:WaitForChild("GetShopData")
-local purchaseUpgradeEvent = ReplicatedStorage:WaitForChild("PurchaseUpgrade")
-local shopFeedbackEvent = ReplicatedStorage:WaitForChild("ShopFeedback")
+-- Events will be loaded when needed
+local getShopDataEvent = nil
+local purchaseUpgradeEvent = nil
+local shopFeedbackEvent = nil
 
 --[[
     Create shop UI
 ]]
 function ShopUI.CreateUI()
+    -- Get screenGui if not already loaded
+    if not screenGui then
+        screenGui = player:WaitForChild("PlayerGui"):WaitForChild("ScreenGui")
+    end
+    
+    -- Get events if not already loaded
+    if not getShopDataEvent then
+        getShopDataEvent = ReplicatedStorage:WaitForChild("GetShopData")
+        purchaseUpgradeEvent = ReplicatedStorage:WaitForChild("PurchaseUpgrade")
+        shopFeedbackEvent = ReplicatedStorage:WaitForChild("ShopFeedback")
+        
+        -- Listen for shop feedback
+        shopFeedbackEvent.OnClientEvent:Connect(function(message)
+            print("🏪 " .. message)
+        end)
+    end
+    
     -- Main shop frame (center of screen)
     shopFrame = Instance.new("Frame")
     shopFrame.Name = "ShopFrame"
@@ -228,10 +245,5 @@ function ShopUI.Toggle()
         ShopUI.Open()
     end
 end
-
--- Listen for shop feedback
-shopFeedbackEvent.OnClientEvent:Connect(function(message)
-    print("🏪 " .. message)
-end)
 
 return ShopUI
