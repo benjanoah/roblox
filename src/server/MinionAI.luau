@@ -41,7 +41,7 @@ local function CreateMinionBody(position, health, damage)
     local minion = Instance.new("Model")
     minion.Name = randomName
     
-    local color = BrickColor.new("Lime green") -- Groen zombie!
+    local color = BrickColor.new("Bright red") -- Rode zombie!
     
     -- HumanoidRootPart (invisible center)
     local hrp = Instance.new("Part")
@@ -80,11 +80,11 @@ local function CreateMinionBody(position, health, damage)
     headWeld.C0 = CFrame.new(0, 0.9, 0)
     headWeld.Parent = head
     
-    -- Eyes (glowing red)
+    -- Eyes (glowing green)
     local leftEye = Instance.new("Part")
     leftEye.Name = "LeftEye"
     leftEye.Size = Vector3.new(0.15, 0.15, 0.1)
-    leftEye.BrickColor = BrickColor.new("Really red")
+    leftEye.BrickColor = BrickColor.new("Lime green")
     leftEye.Material = Enum.Material.Neon
     leftEye.Parent = minion
     
@@ -97,7 +97,7 @@ local function CreateMinionBody(position, health, damage)
     local rightEye = Instance.new("Part")
     rightEye.Name = "RightEye"
     rightEye.Size = Vector3.new(0.15, 0.15, 0.1)
-    rightEye.BrickColor = BrickColor.new("Really red")
+    rightEye.BrickColor = BrickColor.new("Lime green")
     rightEye.Material = Enum.Material.Neon
     rightEye.Parent = minion
     
