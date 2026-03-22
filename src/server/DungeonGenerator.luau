@@ -294,40 +294,44 @@ local function BuildDungeon()
         treasure.Name = "Treasure"
         treasure.Parent = workspace -- In workspace root for HeroAI!
         
-        -- Stack of gold bars (3x2 stack)
-        local barWidth = 2
-        local barHeight = 0.6
-        local barDepth = 1
+        -- Stack of gold bars (3x2 stack) - trapezoid shape like real gold bars
+        local barWidth = 2.5
+        local barHeight = 0.5
+        local barDepth = 1.2
         
         -- Bottom layer (3 bars) - on the floor
         for i = 0, 2 do
-            local bar = Instance.new("Part")
+            local bar = Instance.new("WedgePart")
             bar.Name = "GoldBar"
             bar.Size = Vector3.new(barWidth, barHeight, barDepth)
             bar.Position = Vector3.new(
-                centerX + (i - 1) * (barWidth + 0.2),
-                0.5 + barHeight / 2, -- On top of floor (0.5 floor height)
+                centerX + (i - 1) * (barWidth + 0.3),
+                0.5 + barHeight / 2, -- On top of floor
                 centerZ
             )
+            bar.Orientation = Vector3.new(0, 0, 0) -- Flat on ground
             bar.Anchored = true
-            bar.Color = Color3.fromRGB(218, 165, 32) -- Darker gold
-            bar.Material = Enum.Material.Metal
+            bar.Color = Color3.fromRGB(255, 215, 0) -- Bright gold
+            bar.Material = Enum.Material.SmoothPlastic
+            bar.Reflectance = 0.4 -- Shiny like gold
             bar.Parent = treasure
         end
         
-        -- Top layer (2 bars)
+        -- Top layer (2 bars) - slightly rotated for realism
         for i = 0, 1 do
-            local bar = Instance.new("Part")
+            local bar = Instance.new("WedgePart")
             bar.Name = "GoldBar"
             bar.Size = Vector3.new(barWidth, barHeight, barDepth)
             bar.Position = Vector3.new(
-                centerX + (i - 0.5) * (barWidth + 0.2),
-                0.5 + barHeight * 1.5 + barHeight / 2, -- Stacked on bottom layer
+                centerX + (i - 0.5) * (barWidth + 0.3),
+                0.5 + barHeight + barHeight / 2, -- Stacked
                 centerZ
             )
+            bar.Orientation = Vector3.new(0, 0, 0)
             bar.Anchored = true
-            bar.Color = Color3.fromRGB(218, 165, 32) -- Darker gold
-            bar.Material = Enum.Material.Metal
+            bar.Color = Color3.fromRGB(255, 215, 0) -- Bright gold
+            bar.Material = Enum.Material.SmoothPlastic
+            bar.Reflectance = 0.4 -- Shiny
             bar.Parent = treasure
         end
         
