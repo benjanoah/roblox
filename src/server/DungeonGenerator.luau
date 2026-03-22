@@ -259,6 +259,7 @@ local function BuildDungeon()
                 floor.Parent = floorFolder
                 
             elseif cellType == 2 then -- Wall
+                -- Visible wall (6 studs high)
                 local wall = Instance.new("Part")
                 wall.Name = "Wall"
                 wall.Size = Vector3.new(CELL_SIZE, WALL_HEIGHT, CELL_SIZE)
@@ -267,6 +268,16 @@ local function BuildDungeon()
                 wall.Color = WALL_COLOR
                 wall.Material = Enum.Material.Brick
                 wall.Parent = wallFolder
+                
+                -- Invisible barrier (20 studs high, starts where visible wall ends)
+                local barrier = Instance.new("Part")
+                barrier.Name = "Barrier"
+                barrier.Size = Vector3.new(CELL_SIZE, 20, CELL_SIZE)
+                barrier.Position = Vector3.new(x * CELL_SIZE - GRID_SIZE/2, WALL_HEIGHT + 10, y * CELL_SIZE - GRID_SIZE/2)
+                barrier.Anchored = true
+                barrier.CanCollide = true
+                barrier.Transparency = 1 -- Invisible
+                barrier.Parent = wallFolder
             end
         end
     end
