@@ -294,14 +294,14 @@ local function BuildDungeon()
         treasure.Name = "Treasure"
         treasure.Parent = workspace -- In workspace root for HeroAI!
         
-        -- Stack of gold bars (3x2 stack) - trapezoid shape like real gold bars
+        -- Stack of gold bars (3x2 stack) - brick shape like real gold bars
         local barWidth = 2.5
-        local barHeight = 0.5
+        local barHeight = 0.8
         local barDepth = 1.2
         
         -- Bottom layer (3 bars) - on the floor
         for i = 0, 2 do
-            local bar = Instance.new("WedgePart")
+            local bar = Instance.new("Part")
             bar.Name = "GoldBar"
             bar.Size = Vector3.new(barWidth, barHeight, barDepth)
             bar.Position = Vector3.new(
@@ -309,17 +309,16 @@ local function BuildDungeon()
                 0.5 + barHeight / 2, -- On top of floor
                 centerZ
             )
-            bar.Orientation = Vector3.new(0, 0, 0) -- Flat on ground
             bar.Anchored = true
             bar.Color = Color3.fromRGB(255, 215, 0) -- Bright gold
             bar.Material = Enum.Material.SmoothPlastic
-            bar.Reflectance = 0.4 -- Shiny like gold
+            bar.Reflectance = 0.5 -- Very shiny
             bar.Parent = treasure
         end
         
-        -- Top layer (2 bars) - slightly rotated for realism
+        -- Top layer (2 bars)
         for i = 0, 1 do
-            local bar = Instance.new("WedgePart")
+            local bar = Instance.new("Part")
             bar.Name = "GoldBar"
             bar.Size = Vector3.new(barWidth, barHeight, barDepth)
             bar.Position = Vector3.new(
@@ -327,11 +326,10 @@ local function BuildDungeon()
                 0.5 + barHeight + barHeight / 2, -- Stacked
                 centerZ
             )
-            bar.Orientation = Vector3.new(0, 0, 0)
             bar.Anchored = true
             bar.Color = Color3.fromRGB(255, 215, 0) -- Bright gold
             bar.Material = Enum.Material.SmoothPlastic
-            bar.Reflectance = 0.4 -- Shiny
+            bar.Reflectance = 0.5 -- Very shiny
             bar.Parent = treasure
         end
         
