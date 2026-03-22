@@ -299,19 +299,19 @@ local function BuildDungeon()
         local barHeight = 0.6
         local barDepth = 1
         
-        -- Bottom layer (3 bars)
+        -- Bottom layer (3 bars) - on the floor
         for i = 0, 2 do
             local bar = Instance.new("Part")
             bar.Name = "GoldBar"
             bar.Size = Vector3.new(barWidth, barHeight, barDepth)
             bar.Position = Vector3.new(
                 centerX + (i - 1) * (barWidth + 0.2),
-                barHeight / 2,
+                0.5 + barHeight / 2, -- On top of floor (0.5 floor height)
                 centerZ
             )
             bar.Anchored = true
-            bar.Color = Color3.fromRGB(255, 215, 0) -- Gold
-            bar.Material = Enum.Material.Neon
+            bar.Color = Color3.fromRGB(218, 165, 32) -- Darker gold
+            bar.Material = Enum.Material.Metal
             bar.Parent = treasure
         end
         
@@ -322,12 +322,12 @@ local function BuildDungeon()
             bar.Size = Vector3.new(barWidth, barHeight, barDepth)
             bar.Position = Vector3.new(
                 centerX + (i - 0.5) * (barWidth + 0.2),
-                barHeight * 1.5 + barHeight / 2,
+                0.5 + barHeight * 1.5 + barHeight / 2, -- Stacked on bottom layer
                 centerZ
             )
             bar.Anchored = true
-            bar.Color = Color3.fromRGB(255, 215, 0) -- Gold
-            bar.Material = Enum.Material.Neon
+            bar.Color = Color3.fromRGB(218, 165, 32) -- Darker gold
+            bar.Material = Enum.Material.Metal
             bar.Parent = treasure
         end
         
