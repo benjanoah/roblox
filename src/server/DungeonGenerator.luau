@@ -346,19 +346,50 @@ end
 function DungeonGenerator.GetHeroSpawns(count)
     local spawns = {}
     
+    -- Calculate treasure position (center of first room)
+    local treasurePos = nil
+    if #rooms > 0 then
+        local room = rooms[1]
+        local worldX = room.centerX * CELL_SIZE - GRID_SIZE/2
+        local worldZ = room.centerY * CELL_SIZE - GRID_SIZE/2
+        treasurePos = Vector3.new(worldX, 3, worldZ)
+    end
+    
     -- Use rooms 2+ for hero spawns
     for i = 1, count do
-        local roomIndex = math.random(2, math.max(2, #rooms))
-        local room = rooms[roomIndex]
+        local validSpawn = false
+        local attempts = 0
+        local spawnPos = nil
         
-        -- Random position within room
-        local rx = math.random(room.x, room.x + room.width - 1)
-        local ry = math.random(room.y, room.y + room.height - 1)
+        while not validSpawn and attempts < 50 do
+            local roomIndex = math.random(2, math.max(2, #rooms))
+            local room = rooms[roomIndex]
+            
+            -- Random position within room
+            local rx = math.random(room.x, room.x + room.width - 1)
+            local ry = math.random(room.y, room.y + room.height - 1)
+            
+            local worldX = rx * CELL_SIZE - GRID_SIZE/2
+            local worldZ = ry * CELL_SIZE - GRID_SIZE/2
+            
+            spawnPos = Vector3.new(worldX, 3, worldZ)
+            
+            -- Check distance to treasure (must be > 10 studs)
+            if treasurePos then
+                local distance = (spawnPos - treasurePos).Magnitude
+                if distance > 10 then
+                    validSpawn = true
+                end
+            else
+                validSpawn = true -- No treasure check needed
+            end
+            
+            attempts = attempts + 1
+        end
         
-        local worldX = rx * CELL_SIZE - GRID_SIZE/2
-        local worldZ = ry * CELL_SIZE - GRID_SIZE/2
-        
-        table.insert(spawns, Vector3.new(worldX, 3, worldZ))
+        if spawnPos then
+            table.insert(spawns, spawnPos)
+        end
     end
     
     return spawns
