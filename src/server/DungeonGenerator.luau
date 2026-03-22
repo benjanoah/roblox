@@ -286,20 +286,63 @@ local function BuildDungeon()
     -- Put in workspace root so HeroAI can find it!
     if #rooms > 0 then
         local room = rooms[1]
-        local treasure = Instance.new("Part")
+        local centerX = room.centerX * CELL_SIZE - GRID_SIZE/2
+        local centerZ = room.centerY * CELL_SIZE - GRID_SIZE/2
+        
+        -- Create treasure model (gold bars)
+        local treasure = Instance.new("Model")
         treasure.Name = "Treasure"
-        treasure.Size = Vector3.new(3, 3, 3)
-        treasure.Position = Vector3.new(
-            room.centerX * CELL_SIZE - GRID_SIZE/2,
-            2,
-            room.centerY * CELL_SIZE - GRID_SIZE/2
-        )
-        treasure.Anchored = true
-        treasure.Color = Color3.fromRGB(255, 215, 0) -- Gold
-        treasure.Material = Enum.Material.Neon
         treasure.Parent = workspace -- In workspace root for HeroAI!
         
-        print("💎 Treasure placed in center room")
+        -- Stack of gold bars (3x2 stack)
+        local barWidth = 2
+        local barHeight = 0.6
+        local barDepth = 1
+        
+        -- Bottom layer (3 bars)
+        for i = 0, 2 do
+            local bar = Instance.new("Part")
+            bar.Name = "GoldBar"
+            bar.Size = Vector3.new(barWidth, barHeight, barDepth)
+            bar.Position = Vector3.new(
+                centerX + (i - 1) * (barWidth + 0.2),
+                barHeight / 2,
+                centerZ
+            )
+            bar.Anchored = true
+            bar.Color = Color3.fromRGB(255, 215, 0) -- Gold
+            bar.Material = Enum.Material.Neon
+            bar.Parent = treasure
+        end
+        
+        -- Top layer (2 bars)
+        for i = 0, 1 do
+            local bar = Instance.new("Part")
+            bar.Name = "GoldBar"
+            bar.Size = Vector3.new(barWidth, barHeight, barDepth)
+            bar.Position = Vector3.new(
+                centerX + (i - 0.5) * (barWidth + 0.2),
+                barHeight * 1.5 + barHeight / 2,
+                centerZ
+            )
+            bar.Anchored = true
+            bar.Color = Color3.fromRGB(255, 215, 0) -- Gold
+            bar.Material = Enum.Material.Neon
+            bar.Parent = treasure
+        end
+        
+        -- PrimaryPart for HeroAI detection
+        local primaryPart = Instance.new("Part")
+        primaryPart.Name = "Primary"
+        primaryPart.Size = Vector3.new(3, 2, 1)
+        primaryPart.Position = Vector3.new(centerX, 1, centerZ)
+        primaryPart.Anchored = true
+        primaryPart.Transparency = 1 -- Invisible hitbox
+        primaryPart.CanCollide = false
+        primaryPart.Parent = treasure
+        treasure.PrimaryPart = primaryPart
+        
+        print("💰 Treasure (gold bars) placed in center room")
     end
     
     -- Place Exit in a random far room
